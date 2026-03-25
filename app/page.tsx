@@ -1,65 +1,205 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useState } from "react";
+import styled from "styled-components";
+import Link from "next/link"; // [수정] next/link 임포트
+import { 
+  Package, 
+  Eye, 
+  Settings, 
+  Presentation, 
+  HardHat, 
+  Truck, 
+  ArrowUpRight 
+} from "lucide-react";
+
+// --- 데이터 정의 (A1 ~ A6) ---
+const MENU_DATA = [
+  { id: "a1", title: "A1", desc: "A1-1", Icon: Package },
+  { id: "a2", title: "A2", desc: "A1-2", Icon: Eye },
+  { id: "a3", title: "A3", desc: "A1-3", Icon: Settings },
+  { id: "a4", title: "A4", desc: "A1-4", Icon: Presentation },
+  { id: "a5", title: "A5", desc: "A1-5", Icon: HardHat },
+  { id: "a6", title: "A6", desc: "A1-6", Icon: Truck },
+];
+
+export default function FactoryDashboard() {
+  const [activeCard, setActiveCard] = useState<string | null>(null);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <DashboardWrapper>
+      <BackgroundImage />
+      
+      <GridContainer>
+        {MENU_DATA.map((menu) => (
+          <MenuCard
+            key={menu.id}
+            href={`/${menu.id}`} // [수정] Link 컴포넌트의 href 속성 사용
+            $isActive={activeCard === menu.id}
+            onTouchStart={() => setActiveCard(menu.id)}
+            onTouchEnd={() => setActiveCard(null)}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <IconBox>
+              <menu.Icon size={32} color="#ffffff" strokeWidth={1.5} />
+            </IconBox>
+            
+            <BottomContent>
+              <TextGroup className="text-content">
+                <Title>{menu.title}</Title>
+                <Description>{menu.desc}</Description>
+              </TextGroup>
+              
+              <ArrowBox className="arrow-icon">
+                <ArrowUpRight size={36} color="#ffffff" strokeWidth={1.5} />
+              </ArrowBox>
+            </BottomContent>
+          </MenuCard>
+        ))}
+      </GridContainer>
+    </DashboardWrapper>
   );
 }
+
+// --- Styled Components ---
+
+const DashboardWrapper = styled.div`
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #111111;
+`;
+
+const BackgroundImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/bg-factory.jpg'); 
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+  z-index: 0;
+`;
+
+const GridContainer = styled.div`
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  background-color: rgba(0, 0, 0, 0.4);
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, 1fr);
+  }
+`;
+
+/* [수정] styled.div 에서 styled(Link) 로 변경 */
+const MenuCard = styled(Link)<{ $isActive: boolean }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 2.5rem;
+  cursor: pointer;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none; /* [추가] 링크 기본 밑줄 제거 */
+
+  /* 터치 액티브 상태 시: 밝은 하늘색 반투명 */
+  background-color: ${(props) => (props.$isActive ? "rgba(66, 133, 244, 0.85)" : "transparent")};
+
+  .text-content {
+    transition: transform 0.3s ease;
+    transform-origin: left bottom;
+    transform: ${(props) => (props.$isActive ? "scale(1.1)" : "scale(1)")};
+  }
+
+  .arrow-icon {
+    transition: all 0.3s ease;
+    opacity: ${(props) => (props.$isActive ? 0.2 : 0)};
+    transform: ${(props) => (props.$isActive ? "translateY(0)" : "translateY(10px)")};
+  }
+
+  /* 데스크톱 마우스 호버 시 */
+  @media (hover: hover) {
+    &:hover {
+      background-color: rgba(66, 133, 244, 0.85);
+      
+      .text-content {
+        transform: scale(1.1);
+      }
+      
+      .arrow-icon {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+`;
+
+const IconBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+`;
+
+const BottomContent = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const TextGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+`;
+
+const Title = styled.h2`
+  margin: 0;
+  color: #ffffff;
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+
+  @media (max-width: 1024px) {
+    font-size: 2.2rem;
+  }
+`;
+
+const Description = styled.p`
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+
+  @media (max-width: 1024px) {
+    font-size: 1.0rem;
+  }
+`;
+
+const ArrowBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
