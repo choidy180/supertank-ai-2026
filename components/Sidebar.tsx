@@ -17,7 +17,7 @@ const MENU_ITEMS = [
   { id: "realtime-defect-status", label: "불량역추적", icon: <Activity size={24} />, path: "/realtime-defect-status" },
   { id: "time", label: "타임체크", icon: <Clock size={24} />, path: "/timecheck" },
   { id: "fire", label: "소방관리", icon: <Flame size={24} />, path: "/fire" },
-  { id: "idle", label: "무작업관리", icon: <PauseCircle size={24} />, path: "/timecheck" },
+  { id: "idle", label: "무작업관리", icon: <PauseCircle size={24} />, path: "/no-work" },
 ];
 
 export default function Sidebar() {

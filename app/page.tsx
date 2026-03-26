@@ -18,7 +18,7 @@ const MENU_DATA = [
   { id: "realtime-defect-status", title: "불량 역추적", desc: "불량 수리대에서 불량품 발생 시 작업자가 육안으로 원인을 파악하고 수리 방법을 매뉴얼에서 검색합니다.", Icon: Eye },
   { id: "timecheck", title: "타임체크", desc: "정해진 시간마다 라인을 순회하며 설비를 점검하고 수기로 보고서 작성", Icon: Package },
   { id: "fire", title: "소방관리", desc: "정기적으로 소화기, 소화전 등 소방설비의 위치와 상태를 점검하고 보고서 작성", Icon: Settings },
-  { id: "a4", title: "A4", desc: "A1-4", Icon: Presentation },
+  { id: "no-work", title: "무작업 관리", desc: "무작업 구간 발생 시 PLAS 정보와 현장 조치 내용을 기반으로 보고서 작성", Icon: Presentation },
   { id: "a5", title: "A5", desc: "A1-5", Icon: HardHat },
   { id: "a6", title: "A6", desc: "A1-6", Icon: Truck },
 ];
