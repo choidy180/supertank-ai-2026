@@ -12,7 +12,6 @@ const Header = styled.header`
   min-height: 74px;
   padding: 10px 12px;
   background: linear-gradient(90deg, #1c232e 0%, #111822 45%, #1a2028 100%);
-  border-bottom: 2px solid #d81f26;
 `;
 
 const Left = styled.div`
@@ -145,7 +144,7 @@ export default function MainHeader({ currentDateTime }: MainHeaderProps) {
       </Left>
 
       <Right>
-        <TimePill>
+        <TimePill suppressHydrationWarning>
           <LiveDot />
           {currentDateTime}
         </TimePill>

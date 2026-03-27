@@ -74,7 +74,7 @@ const BottomArea = styled.div`
     min-width: 0;
   }
   > :nth-child(2) {
-    flex: 0.92;
+    flex: 1;
     min-width: 0;
   }
   > :nth-child(3) {

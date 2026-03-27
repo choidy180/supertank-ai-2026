@@ -17,23 +17,18 @@ export const SUMMARY_METRICS: SummaryMetric[] = [
     accent: 'yellow'
   },
   {
-    label: '목표 수량',
+    label: '현재 이론 수량',
     value: '1142',
     accent: 'green'
   },
   {
-    label: '생산 수량',
+    label: '현재 생산 수량',
     value: '1132',
     accent: 'blue'
   }
 ];
 
 export const KPI_METRICS: KpiMetric[] = [
-  {
-    label: '설비 종합효율',
-    value: '54.4%',
-    accent: 'blue'
-  },
   {
     label: '성능 가동률',
     value: '59.27%',

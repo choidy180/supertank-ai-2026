@@ -29,15 +29,16 @@ const Head = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 800;
   color: #2b384b;
 `;
 
 const DateMeta = styled.div`
-  font-size: 12px;
-  font-weight: 700;
-  color: #6f7d92;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -.4px;
+  color: #4c525c;
 `;
 
 const Controls = styled.div`
@@ -73,7 +74,7 @@ const ControlValue = styled.div`
 `;
 
 const ControlIcon = styled.div`
-  font-size: 13px;
+  font-size: 16px;
   color: #55657c;
 `;
 
@@ -97,10 +98,10 @@ const SearchMeta = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 34px;
+  min-height: 40px;
   padding: 0 12px;
   border-bottom: 1px solid #d0d7e0;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
   color: #62738a;
 `;
@@ -118,7 +119,7 @@ const PaginationPill = styled.div`
 
 const ProductSection = styled.div`
   display: grid;
-  grid-template-columns: 84px minmax(0, 1fr) 70px;
+  grid-template-columns: 84px minmax(0, 1fr) 100px;
   gap: 10px;
   padding: 12px;
   min-height: 0;
@@ -135,13 +136,13 @@ const TinyLabelCard = styled.div`
 `;
 
 const TinyLabel = styled.div`
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 900;
   color: #34455d;
 `;
 
 const TinySub = styled.div`
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   color: #7a889b;
 `;
@@ -163,8 +164,8 @@ const ProductTop = styled.div`
 `;
 
 const ProductTitle = styled.div`
-  font-size: 16px;
-  font-weight: 900;
+  font-size: 18px;
+  font-weight: 700;
   line-height: 1.25;
   color: #162537;
 `;
@@ -178,8 +179,8 @@ const ProductBadge = styled.div`
   border: 1px solid #bfd1ef;
   background: #edf4ff;
   color: #5576af;
-  font-size: 12px;
-  font-weight: 900;
+  font-size: 16px;
+  font-weight: 700;
   white-space: nowrap;
 `;
 
@@ -188,9 +189,10 @@ const ProductMeta = styled.div`
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 700;
   color: #56677f;
+  word-spacing: -1px;
 `;
 
 const MiniStatus = styled.div`
@@ -198,12 +200,12 @@ const MiniStatus = styled.div`
   display: inline-flex;
   align-items: center;
   min-height: 26px;
-  padding: 0 10px;
+  padding: 7px 14px;
   border-radius: 999px;
   border: 1px solid #d6deea;
   background: #f4f7fb;
   color: #6d7c90;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 800;
 `;
 
@@ -215,11 +217,12 @@ const VerticalState = styled.div`
   border: 1px solid #b8d0f4;
   background: linear-gradient(180deg, #edf5ff 0%, #dbe7f9 100%);
   color: #314968;
-  font-size: 13px;
-  font-weight: 900;
+  font-size: 16px;
+  font-weight: 700;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   letter-spacing: 0.04em;
+  min-width: 100px;
 `;
 
 const SideTag = styled.div`

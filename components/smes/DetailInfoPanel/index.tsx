@@ -28,7 +28,7 @@ const Head = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 800;
   color: #2b384b;
 `;
@@ -37,6 +37,7 @@ const Tabs = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 6px;
 `;
 
 const Tab = styled.button<{ $active?: boolean }>`
@@ -44,10 +45,10 @@ const Tab = styled.button<{ $active?: boolean }>`
   border: 1px solid ${({ $active }) => ($active ? 'rgba(205, 160, 68, 0.42)' : 'transparent')};
   background: ${({ $active }) => ($active ? '#ffffff' : 'transparent')};
   color: ${({ $active }) => ($active ? '#1f2e42' : '#68778c')};
-  min-height: 28px;
+  min-height: 34px;
   padding: 0 10px;
   border-radius: 7px;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 800;
   cursor: pointer;
 `;

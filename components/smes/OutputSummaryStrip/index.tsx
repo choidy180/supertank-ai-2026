@@ -41,8 +41,8 @@ const StatCard = styled.div`
 `;
 
 const Label = styled.div<{ $accent: 'yellow' | 'white' | 'green' | 'orange' }>`
-  font-size: 16px;
-  font-weight: 900;
+  font-size: 24px;
+  font-weight: 700;
   color:
     ${({ $accent }) => {
       switch ($accent) {
@@ -59,9 +59,9 @@ const Label = styled.div<{ $accent: 'yellow' | 'white' | 'green' | 'orange' }>`
 `;
 
 const Value = styled.div<{ $accent: 'yellow' | 'white' | 'green' | 'orange' }>`
-  font-size: 32px;
+  font-size: 42px;
   line-height: 1;
-  font-weight: 900;
+  font-weight: 800;
   color:
     ${({ $accent }) => {
       switch ($accent) {
@@ -89,7 +89,7 @@ export default function OutputSummaryStrip({ metrics, updateTime }: OutputSummar
           return (
             <StatCard key={metric.label}>
               <Label $accent={metric.accent}>{metric.label}</Label>
-              <Value $accent={metric.accent}>{value}</Value>
+              <Value $accent={metric.accent} suppressHydrationWarning>{value}</Value>
             </StatCard>
           );
         })}
