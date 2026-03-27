@@ -10,7 +10,8 @@ import {
   PauseCircle, 
   Menu, 
   ChevronLeft,
-  Package
+  Package,
+  Truck // ✨ 물류관제 느낌을 위한 트럭 아이콘 추가
 } from "lucide-react";
 import Link from "next/link";
 
@@ -19,7 +20,9 @@ const MENU_ITEMS = [
   { id: "time", label: "타임체크", icon: <Clock size={24} />, path: "/timecheck" },
   { id: "fire", label: "소방관리", icon: <Flame size={24} />, path: "/fire" },
   { id: "idle", label: "무작업관리", icon: <PauseCircle size={24} />, path: "/no-work" },
-  { id: "material", label: "자재입고", icon: <Package size={24} />, path: "/material" }, 
+  { id: "receiving-material", label: "자재입고", icon: <Package size={24} />, path: "/receiving-material" }, 
+  // ✨ SMES (물류관제) 탭 추가
+  { id: "smes", label: "SMES", icon: <Truck size={24} />, path: "/smes" }, 
 ];
 
 export default function Sidebar() {
@@ -31,7 +34,6 @@ export default function Sidebar() {
   return (
     <SidebarWrapper $isExpanded={isExpanded}>
       <Header $isExpanded={isExpanded}>
-        {/* ✨ LogoWrapper를 Link로 변경하고 href="/" 추가 */}
         <LogoWrapper href="/" $isExpanded={isExpanded}>
           <LogoIcon />
           <LogoText $isExpanded={isExpanded}>SmartFactory</LogoText>
@@ -58,7 +60,7 @@ export default function Sidebar() {
               </MenuLink>
             </MenuItem>
           );
-          })}
+        })}
       </MenuList>
     </SidebarWrapper>
   );
@@ -91,7 +93,6 @@ const Header = styled.div<{ $isExpanded: boolean }>`
   transition: all 0.3s ease;
 `;
 
-// ✨ styled.div -> styled(Link)로 변경
 const LogoWrapper = styled(Link)<{ $isExpanded: boolean }>`
   display: flex;
   align-items: center;
@@ -101,7 +102,7 @@ const LogoWrapper = styled(Link)<{ $isExpanded: boolean }>`
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   transition: width 0.3s ease, opacity 0.3s ease;
   white-space: nowrap;
-  text-decoration: none; /* ✨ a 태그 기본 밑줄 제거 */
+  text-decoration: none;
   cursor: pointer;
 `;
 
