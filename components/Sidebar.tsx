@@ -9,7 +9,8 @@ import {
   Flame, 
   PauseCircle, 
   Menu, 
-  ChevronLeft 
+  ChevronLeft,
+  Package
 } from "lucide-react";
 import Link from "next/link";
 
@@ -18,6 +19,7 @@ const MENU_ITEMS = [
   { id: "time", label: "타임체크", icon: <Clock size={24} />, path: "/timecheck" },
   { id: "fire", label: "소방관리", icon: <Flame size={24} />, path: "/fire" },
   { id: "idle", label: "무작업관리", icon: <PauseCircle size={24} />, path: "/no-work" },
+  { id: "material", label: "자재입고", icon: <Package size={24} />, path: "/material" }, 
 ];
 
 export default function Sidebar() {
@@ -29,12 +31,12 @@ export default function Sidebar() {
   return (
     <SidebarWrapper $isExpanded={isExpanded}>
       <Header $isExpanded={isExpanded}>
-        <LogoWrapper $isExpanded={isExpanded}>
+        {/* ✨ LogoWrapper를 Link로 변경하고 href="/" 추가 */}
+        <LogoWrapper href="/" $isExpanded={isExpanded}>
           <LogoIcon />
           <LogoText $isExpanded={isExpanded}>SmartFactory</LogoText>
         </LogoWrapper>
         <ToggleButton onClick={() => {
-          console.log("버튼 정상적으로 클릭됨! 상태 변경 시도 중..."); // 💡 클릭 확인용 로그
           setIsExpanded((prev) => !prev);
         }}>
           {isExpanded ? <ChevronLeft size={20} /> : <Menu size={20} />}
@@ -56,7 +58,7 @@ export default function Sidebar() {
               </MenuLink>
             </MenuItem>
           );
-        })}
+          })}
       </MenuList>
     </SidebarWrapper>
   );
@@ -65,13 +67,9 @@ export default function Sidebar() {
 // --- Styled Components ---
 
 const SidebarWrapper = styled.aside<{ $isExpanded: boolean }>`
-  /* width뿐만 아니라 min-width도 같이 제어해서 강제로 크기를 맞춥니다 */
-  width: ${({ $isExpanded }) => ($isExpanded ? "260px" : "80px")};
-  min-width: ${({ $isExpanded }) => ($isExpanded ? "260px" : "80px")};
-  
-  /* 부모 flex 컨테이너에 의해 크기가 맘대로 늘어나거나 줄어드는 것을 완벽히 차단합니다 */
+  width: ${({ $isExpanded }) => ($isExpanded ? "300px" : "80px")};
+  min-width: ${({ $isExpanded }) => ($isExpanded ? "300px" : "80px")};
   flex-shrink: 0; 
-  
   height: 100vh;
   background-color: #0b132b;
   border-right: 1px solid #1e293b;
@@ -93,15 +91,18 @@ const Header = styled.div<{ $isExpanded: boolean }>`
   transition: all 0.3s ease;
 `;
 
-const LogoWrapper = styled.div<{ $isExpanded: boolean }>`
+// ✨ styled.div -> styled(Link)로 변경
+const LogoWrapper = styled(Link)<{ $isExpanded: boolean }>`
   display: flex;
   align-items: center;
   gap: 12px;
   overflow: hidden;
-  width: ${({ $isExpanded }) => ($isExpanded ? "160px" : "0px")};
+  width: ${({ $isExpanded }) => ($isExpanded ? "200px" : "0px")};
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   transition: width 0.3s ease, opacity 0.3s ease;
   white-space: nowrap;
+  text-decoration: none; /* ✨ a 태그 기본 밑줄 제거 */
+  cursor: pointer;
 `;
 
 const LogoIcon = styled.div`
@@ -122,7 +123,6 @@ const LogoText = styled.span<{ $isExpanded: boolean }>`
 const ToggleButton = styled.button`
   background: transparent;
   border: none;
-  /* ✨ 토글 버튼(햄버거/화살표)도 밝은 흰색으로 변경 */
   color: #f8fafc;
   cursor: pointer;
   display: flex;
@@ -141,7 +141,6 @@ const ToggleButton = styled.button`
     color: #ffffff;
   }
 
-  /* ✨ 토글 아이콘 색상 강제 적용 */
   svg {
     stroke: currentColor;
   }
@@ -166,11 +165,8 @@ const MenuLink = styled(Link)<{ $isActive: boolean; $isExpanded: boolean }>`
   align-items: center;
   justify-content: ${({ $isExpanded }) => ($isExpanded ? "flex-start" : "center")};
   height: 52px;
-  
-  /* ✨ 핵심: 닫혔을 때는 박스 크기를 48px로 줄이고, 가운데 정렬되도록 고정 */
   width: ${({ $isExpanded }) => ($isExpanded ? "100%" : "48px")};
   margin: 0 auto;
-  
   padding: ${({ $isExpanded }) => ($isExpanded ? "0 12px" : "0")};
   border-radius: 12px;
   text-decoration: none;
@@ -187,14 +183,10 @@ const IconWrapper = styled.div<{ $isActive: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* ✨ 아이콘 크기 고정 (밀려나거나 찌그러짐 방지) */
   min-width: 24px;
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-  
-  /* 활성화 시 확 띄게 완전한 흰색으로 */
   color: ${({ $isActive }) => ($isActive ? "#ffffff" : "#f8fafc")};
   transition: color 0.2s ease;
 
@@ -208,13 +200,10 @@ const MenuText = styled.span<{ $isExpanded: boolean; $isActive: boolean }>`
   font-size: 1rem;
   font-weight: ${({ $isActive }) => ($isActive ? "700" : "500")};
   white-space: nowrap;
-  
-  /* ✨ 핵심: 닫혔을 때 글자가 차지하는 물리적 공간(너비, 마진)을 0으로 만들어버림 */
   max-width: ${({ $isExpanded }) => ($isExpanded ? "200px" : "0")};
   margin-left: ${({ $isExpanded }) => ($isExpanded ? "16px" : "0")};
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   overflow: hidden;
-  
   transition: all 0.3s ease;
   pointer-events: ${({ $isExpanded }) => ($isExpanded ? "auto" : "none")};
 `;

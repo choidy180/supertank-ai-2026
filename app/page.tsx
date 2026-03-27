@@ -19,7 +19,7 @@ const MENU_DATA = [
   { id: "timecheck", title: "타임체크", desc: "정해진 시간마다 라인을 순회하며 설비를 점검하고 수기로 보고서 작성", Icon: Package },
   { id: "fire", title: "소방관리", desc: "정기적으로 소화기, 소화전 등 소방설비의 위치와 상태를 점검하고 보고서 작성", Icon: Settings },
   { id: "no-work", title: "무작업 관리", desc: "무작업 구간 발생 시 PLAS 정보와 현장 조치 내용을 기반으로 보고서 작성", Icon: Presentation },
-  { id: "a5", title: "A5", desc: "A1-5", Icon: HardHat },
+  { id: "receiving-material", title: "자재 입고", desc: "자재 입고 시 거래명세서 확인, 수량 검수, 시스템 입력 등의 작업을 모두 수작업으로 처리", Icon: HardHat },
   { id: "a6", title: "A6", desc: "A1-6", Icon: Truck },
 ];
 
