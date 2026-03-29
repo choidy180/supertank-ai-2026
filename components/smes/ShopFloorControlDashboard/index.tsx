@@ -24,8 +24,10 @@ import {
   SUMMARY_METRICS,
   WORK_ORDER_ROWS
 } from '../model/constants';
+import EquipmentChecklist from '../EquipmentChecklist';
+import TimeCheckSheet from '../TimeCheckSheet';
+import CriticalManagementPoint from '../CriticalManagementPoint';
 
-// 💡 임시 박스용 스타일 컴포넌트 추가
 const PlaceholderBox = styled.div<{ $bgColor: string }>`
   flex: 1;
   min-height: 0;
@@ -99,10 +101,70 @@ const RightColumn = styled.div`
   }
 
   > :nth-child(1) { min-height: 264px; }
-  > :nth-child(2) { min-height: 320px; }
-  > :nth-child(3) { min-height: 260px; }
+  > :nth-child(2) { min-height: 350px; }
+  > :nth-child(3) { min-height: 354px; }
   > :nth-child(4) { min-height: 260px; }
   > :nth-child(5) { min-height: 220px; }
+`;
+
+// 왼쪽 디테일 섹션과 탭 메뉴를 묶어줄 래퍼
+const DetailSectionWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+`;
+
+const MenuTabsWrap = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--panel-bg, #ffffff);
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #b8c2ce;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0; /* 메뉴바가 찌그러지지 않도록 고정 */
+`;
+
+// 💡 글자 크기를 14px에서 18px로 키웠습니다.
+const TabButton = styled.button<{ $active?: boolean }>`
+  flex: 1;
+  padding: 10px 4px;
+  border: 1px solid ${({ $active }) => ($active ? '#2b384b' : 'transparent')};
+  background: ${({ $active }) => ($active ? '#2b384b' : '#f0f4f8')};
+  color: ${({ $active }) => ($active ? '#ffffff' : '#68778c')};
+  border-radius: 6px;
+  font-size: 18px; /* 💡 글자 크기 키움 */
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#2b384b' : '#e2e8f0')};
+  }
+`;
+
+// 💡 자동 버튼 글자 크기를 키우고, 활성화 시 색상을 빨간색에서 파란색(#007bff)으로 변경했습니다.
+const AutoButton = styled.button<{ $active?: boolean }>`
+  margin-left: auto;
+  padding: 10px 16px;
+  border: 1px solid ${({ $active }) => ($active ? '#007bff' : '#c6ced8')}; /* 💡 테두리 파란색 */
+  background: ${({ $active }) => ($active ? '#007bff' : '#ffffff')}; /* 💡 배경 파란색 */
+  color: ${({ $active }) => ($active ? '#ffffff' : '#007bff')}; /* 💡 글자색 파란색 */
+  border-radius: 6px;
+  font-size: 18px; /* 💡 글자 크기 키움 */
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: ${({ $active }) => ($active ? '0 0 8px rgba(0, 123, 255, 0.4)' : 'none')}; /* 💡 파란색 그림자 */
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#0056b3' : '#e6f7ff')}; /* 💡 호버 시 진한 파란색 / 연한 파란색 */
+  }
 `;
 
 function pad(value: number) { return String(value).padStart(2, '0'); }
@@ -124,8 +186,9 @@ function formatClock(date: Date) {
   return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 }
 
-// 💡 메뉴 타입을 명확하게 정의
 export type SideMenuType = '사출조건표' | '설비점검표' | '타임체크시트' | '작업지도서' | '사출조건변동이력';
+
+const MENUS: SideMenuType[] = ['사출조건표', '설비점검표', '타임체크시트', '작업지도서', '사출조건변동이력'];
 
 export default function ShopFloorControlDashboard() {
   const [now, setNow] = useState(() => new Date());
@@ -133,8 +196,10 @@ export default function ShopFloorControlDashboard() {
   const [selectedDowntimeId, setSelectedDowntimeId] = useState(DOWNTIME_HISTORY_ROWS[2]?.id ?? DOWNTIME_HISTORY_ROWS[0]?.id ?? '');
   const [selectedLotId, setSelectedLotId] = useState(LOT_HISTORY_ROWS[0]?.id ?? '');
   
-  // 💡 선택된 탭 상태 추가 (기본값: 사출조건표)
   const [selectedMenu, setSelectedMenu] = useState<SideMenuType>('사출조건표');
+  
+  // 💡 자동 켜짐을 디폴트로 설정했습니다 (false -> true).
+  const [isAutoMode, setIsAutoMode] = useState(true);
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -144,20 +209,38 @@ export default function ShopFloorControlDashboard() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    if (!isAutoMode) return;
+    
+    const interval = window.setInterval(() => {
+      setSelectedMenu((prev) => {
+        const currentIndex = MENUS.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % MENUS.length;
+        return MENUS[nextIndex];
+      });
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [isAutoMode]);
+
   const headerDateTime = useMemo(() => formatHeaderDateTime(now), [now]);
   const updateTime = useMemo(() => formatClock(now), [now]);
 
-  // 💡 선택된 메뉴에 따라 렌더링할 하단 컴포넌트를 결정하는 함수
+  const handleMenuClick = (menu: SideMenuType) => {
+    setSelectedMenu(menu);
+    setIsAutoMode(false);
+  };
+
   const renderDetailSection = () => {
     switch (selectedMenu) {
       case '사출조건표':
         return <DetailInfoPanel sections={DETAIL_SECTIONS} />;
       case '설비점검표':
-        return <PlaceholderBox $bgColor="#4A90E2">설비점검표 영역 (준비중)</PlaceholderBox>;
+        return <EquipmentChecklist/>;
       case '타임체크시트':
-        return <PlaceholderBox $bgColor="#50E3C2">타임체크시트 영역 (준비중)</PlaceholderBox>;
+        return <TimeCheckSheet/>;
       case '작업지도서':
-        return <PlaceholderBox $bgColor="#F5A623">작업지도서 영역 (준비중)</PlaceholderBox>;
+        return <CriticalManagementPoint/>;
       case '사출조건변동이력':
         return <PlaceholderBox $bgColor="#D0021B">사출조건변동이력 영역 (준비중)</PlaceholderBox>;
       default:
@@ -177,12 +260,32 @@ export default function ShopFloorControlDashboard() {
             <LeftColumn>
               <AchievementPanel summaryMetrics={SUMMARY_METRICS} kpiMetrics={KPI_METRICS} />
               <OutputSummaryStrip metrics={QUICK_METRICS} updateTime={isMounted ? updateTime : ''} />
-              {/* 💡 조건부 렌더링 함수 실행 */}
-              {renderDetailSection()}
+              
+              <DetailSectionWrap>
+                <MenuTabsWrap>
+                  {MENUS.map((menu) => (
+                    <TabButton 
+                      key={menu} 
+                      $active={selectedMenu === menu}
+                      onClick={() => handleMenuClick(menu)}
+                    >
+                      {menu}
+                    </TabButton>
+                  ))}
+                  <AutoButton 
+                    $active={isAutoMode} 
+                    onClick={() => setIsAutoMode((prev) => !prev)}
+                  >
+                    {isAutoMode ? '자동 켜짐' : '자동 꺼짐'}
+                  </AutoButton>
+                </MenuTabsWrap>
+
+                {renderDetailSection()}
+              </DetailSectionWrap>
+
             </LeftColumn>
 
             <RightColumn>
-              {/* 💡 PlanPanel에 상태 변경 함수 전달 */}
               <PlanPanel 
                 product={PRODUCT_INFO} 
                 onSelectMenu={setSelectedMenu} 

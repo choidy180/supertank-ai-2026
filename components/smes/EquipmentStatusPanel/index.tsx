@@ -6,7 +6,7 @@ interface EquipmentStatusPanelProps {
 }
 
 const Panel = styled.section`
-  min-height: 0;
+  min-height: 160px;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   border: 1px solid #b8c2ce;
@@ -20,21 +20,21 @@ const Head = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  min-height: 34px;
-  padding: 0 12px;
+  gap: 16px; /* 12px -> 16px */
+  min-height: 48px; /* 34px -> 48px (글자가 커진 만큼 높이 확보) */
+  padding: 0 16px;
   background: var(--panel-head-bg);
   border-bottom: 1px solid #c6ced8;
 `;
 
 const Title = styled.div`
-  font-size: 15px;
+  font-size: 20px; /* 15px -> 20px */
   font-weight: 800;
   color: #2b384b;
 `;
 
 const Meta = styled.div`
-  font-size: 11px;
+  font-size: 16px; /* 11px -> 16px */
   font-weight: 700;
   color: #748299;
 `;
@@ -43,15 +43,15 @@ const Grid = styled.div`
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  padding: 10px;
+  gap: 16px; /* 10px -> 16px */
+  padding: 16px; /* 10px -> 16px */
 `;
 
 const Tile = styled.div`
-  min-height: 84px;
+  min-height: 126px; /* 84px -> 110px (내부 텍스트 크기 증가 반영) */
   display: grid;
-  gap: 8px;
-  padding: 12px 14px;
+  gap: 12px; /* 8px -> 12px */
+  padding: 16px 20px; /* 12px 14px -> 16px 20px */
   border-radius: 8px;
   border: 1px solid rgba(74, 114, 162, 0.55);
   background: var(--dark-card);
@@ -61,14 +61,14 @@ const Tile = styled.div`
 `;
 
 const TileLabel = styled.div`
-  font-size: 13px;
+  font-size: 18px; /* 13px -> 18px */
   font-weight: 900;
   color: #7e99bc;
   letter-spacing: 0.04em;
 `;
 
 const TileValue = styled.div<{ $accent: 'yellow' | 'white' | 'red' | 'green' | 'blue' }>`
-  font-size: 22px;
+  font-size: 30px; /* 22px -> 30px (메인 수치 강조) */
   line-height: 1;
   font-weight: 900;
   color:
@@ -89,7 +89,7 @@ const TileValue = styled.div<{ $accent: 'yellow' | 'white' | 'red' | 'green' | '
 `;
 
 const TileNote = styled.div`
-  font-size: 11px;
+  font-size: 16px; /* 11px -> 16px */
   font-weight: 700;
   color: #6f86a7;
 `;

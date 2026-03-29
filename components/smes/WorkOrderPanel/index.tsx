@@ -22,21 +22,21 @@ const Head = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  min-height: 34px;
-  padding: 0 12px;
+  gap: 16px; /* 12px -> 16px */
+  min-height: 48px; /* 34px -> 48px */
+  padding: 0 16px; /* 12px -> 16px */
   background: var(--panel-head-bg);
   border-bottom: 1px solid #c6ced8;
 `;
 
 const Title = styled.div`
-  font-size: 15px;
+  font-size: 20px; /* 15px -> 20px */
   font-weight: 800;
   color: #2b384b;
 `;
 
 const Meta = styled.div`
-  font-size: 11px;
+  font-size: 16px; /* 11px -> 16px */
   font-weight: 700;
   color: #7b889c;
 `;
@@ -56,12 +56,12 @@ const Th = styled.th`
   position: sticky;
   top: 0;
   z-index: 1;
-  height: 32px;
-  padding: 6px 8px;
+  height: 44px; /* 32px -> 44px */
+  padding: 10px 12px; /* 6px 8px -> 10px 12px */
   background: #edf2f7;
   border-bottom: 1px solid #d2dae4;
   color: #6d7b8f;
-  font-size: 12px;
+  font-size: 16px; /* 12px -> 16px */
   font-weight: 800;
   text-align: center;
 `;
@@ -76,11 +76,11 @@ const RowButton = styled.tr<{ $selected: boolean }>`
 `;
 
 const Td = styled.td`
-  height: 36px;
-  padding: 8px 8px;
+  height: 48px; /* 36px -> 48px */
+  padding: 12px 12px; /* 8px 8px -> 12px 12px */
   border-bottom: 1px solid #d8dfe8;
   color: #1e2d41;
-  font-size: 12px;
+  font-size: 16px; /* 12px -> 16px */
   font-weight: 800;
   text-align: center;
   white-space: nowrap;

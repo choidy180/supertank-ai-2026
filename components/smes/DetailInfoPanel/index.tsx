@@ -10,7 +10,7 @@ const Panel = styled.section`
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   border: 1px solid #b8c2ce;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--panel-bg);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
@@ -20,15 +20,15 @@ const Head = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  min-height: 36px;
-  padding: 0 14px;
+  gap: 24px;
+  min-height: 60px; /* 폰트가 커진 만큼 헤더 높이 확대 */
+  padding: 0 24px;
   background: var(--panel-head-bg);
   border-bottom: 1px solid #c6ced8;
 `;
 
 const Title = styled.div`
-  font-size: 20px;
+  font-size: 24px; /* 20px -> 24px */
   font-weight: 800;
   color: #2b384b;
 `;
@@ -36,8 +36,8 @@ const Title = styled.div`
 const Tabs = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px;
+  gap: 12px;
+  padding: 10px;
 `;
 
 const Tab = styled.button<{ $active?: boolean }>`
@@ -45,10 +45,10 @@ const Tab = styled.button<{ $active?: boolean }>`
   border: 1px solid ${({ $active }) => ($active ? 'rgba(205, 160, 68, 0.42)' : 'transparent')};
   background: ${({ $active }) => ($active ? '#ffffff' : 'transparent')};
   color: ${({ $active }) => ($active ? '#1f2e42' : '#68778c')};
-  min-height: 34px;
-  padding: 0 10px;
-  border-radius: 7px;
-  font-size: 16px;
+  min-height: 48px; /* 탭 높이 확대 */
+  padding: 0 20px;
+  border-radius: 8px;
+  font-size: 20px; /* 16px -> 20px */
   font-weight: 800;
   cursor: pointer;
 `;
@@ -56,7 +56,7 @@ const Tab = styled.button<{ $active?: boolean }>`
 const Body = styled.div`
   min-height: 0;
   overflow: auto;
-  padding: 10px;
+  padding: 20px;
 `;
 
 const TableWrap = styled.div`
@@ -73,13 +73,13 @@ const SectionCard = styled.div`
 `;
 
 const SectionTitle = styled.div`
-  min-height: 32px;
+  min-height: 52px; /* 섹션 타이틀 높이 확대 */
   display: flex;
   align-items: center;
-  padding: 0 12px;
+  padding: 0 20px;
   background: #c7d2e1;
   color: #24354c;
-  font-size: 13px;
+  font-size: 20px; /* 16px -> 20px */
   font-weight: 900;
 `;
 
@@ -91,13 +91,13 @@ const Table = styled.table`
 `;
 
 const Th = styled.th`
-  height: 28px;
-  padding: 6px 8px;
+  height: 52px; /* 테이블 헤더 높이 확대 */
+  padding: 12px 16px;
   border-right: 1px solid #d4dce5;
   border-bottom: 1px solid #d4dce5;
   background: #eef2f7;
   color: #41546e;
-  font-size: 12px;
+  font-size: 20px; /* 16px -> 20px */
   font-weight: 800;
   text-align: center;
 
@@ -107,13 +107,13 @@ const Th = styled.th`
 `;
 
 const TdBase = styled.td`
-  height: 28px;
-  padding: 6px 8px;
+  height: 52px; /* 테이블 셀 높이 확대 */
+  padding: 12px 16px;
   border-right: 1px solid #d4dce5;
   border-bottom: 1px solid #d4dce5;
   background: #ffffff;
   color: #1f2c3e;
-  font-size: 12px;
+  font-size: 20px; /* 16px -> 20px */
   font-weight: 700;
   text-align: center;
 
@@ -131,7 +131,7 @@ const BlueCell = styled(TdBase)`
 `;
 
 function shouldUseBlue(sectionTitle: string, value: string, index: number) {
-  return sectionTitle.includes('TEMPERATURE') && index === 0 || value.endsWith('%') || value.includes('40 S') || value.includes('150');
+  return (sectionTitle.includes('TEMPERATURE') && index === 0) || value.endsWith('%') || value.includes('40 S') || value.includes('150');
 }
 
 export default function DetailInfoPanel({ sections }: DetailInfoPanelProps) {
