@@ -11,10 +11,10 @@ import {
   Menu, 
   ChevronLeft,
   Package,
-  Truck, // ✨ 물류관제 느낌을 위한 트럭 아이콘 추가
-  LineChart, // ✨ 인사이트 아이콘
-  History,   // ✨ 조치이력 아이콘
-  Watch      // ✨ 웨어러블 연결 아이콘
+  Truck, 
+  LineChart, 
+  History,   
+  Watch      
 } from "lucide-react";
 import Link from "next/link";
 
@@ -24,8 +24,9 @@ const MENU_ITEMS = [
   { id: "fire", label: "소방관리", icon: <Flame size={24} />, path: "/fire" },
   { id: "idle", label: "무작업관리", icon: <PauseCircle size={24} />, path: "/no-work" },
   { id: "receiving-material", label: "자재입고", icon: <Package size={24} />, path: "/receiving-material" }, 
+  { id: "divider-1", isDivider: true }, // ✨ SMES 위 경계선
   { id: "smes", label: "SMES", icon: <Truck size={24} />, path: "/smes" }, 
-  // ✨ 아래 3개 메뉴 추가됨
+  { id: "divider-2", isDivider: true }, // ✨ SMES 아래 경계선
   { id: "insight", label: "인사이트", icon: <LineChart size={24} />, path: "/insight" }, 
   { id: "action-history", label: "조치이력", icon: <History size={24} />, path: "/action-history" }, 
   { id: "wearable-connect", label: "웨어러블 연결", icon: <Watch size={24} />, path: "/wearable-connect" }, 
@@ -53,10 +54,17 @@ export default function Sidebar() {
 
       <MenuList>
         {MENU_ITEMS.map((item) => {
-          const isActive = pathname.startsWith(item.path);
+          // ✨ 구분선 렌더링 처리
+          if (item.isDivider) {
+            return <MenuDivider key={item.id} />;
+          }
+
+          // item.path가 존재한다는 가정하에 안전하게 체크
+          const isActive = item.path ? pathname.startsWith(item.path) : false;
+          
           return (
             <MenuItem key={item.id}>
-              <MenuLink href={item.path} $isActive={isActive} $isExpanded={isExpanded}>
+              <MenuLink href={item.path!} $isActive={isActive} $isExpanded={isExpanded}>
                 <IconWrapper $isActive={isActive}>
                   {item.icon}
                 </IconWrapper>
@@ -165,6 +173,15 @@ const MenuList = styled.ul`
 
 const MenuItem = styled.li`
   width: 100%;
+`;
+
+// ✨ 새롭게 추가된 구분선 컴포넌트
+const MenuDivider = styled.li`
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 4px 0;
+  width: 100%;
+  list-style: none;
 `;
 
 const MenuLink = styled(Link)<{ $isActive: boolean; $isExpanded: boolean }>`
