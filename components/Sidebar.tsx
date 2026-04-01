@@ -11,7 +11,10 @@ import {
   Menu, 
   ChevronLeft,
   Package,
-  Truck // ✨ 물류관제 느낌을 위한 트럭 아이콘 추가
+  Truck, // ✨ 물류관제 느낌을 위한 트럭 아이콘 추가
+  LineChart, // ✨ 인사이트 아이콘
+  History,   // ✨ 조치이력 아이콘
+  Watch      // ✨ 웨어러블 연결 아이콘
 } from "lucide-react";
 import Link from "next/link";
 
@@ -21,8 +24,11 @@ const MENU_ITEMS = [
   { id: "fire", label: "소방관리", icon: <Flame size={24} />, path: "/fire" },
   { id: "idle", label: "무작업관리", icon: <PauseCircle size={24} />, path: "/no-work" },
   { id: "receiving-material", label: "자재입고", icon: <Package size={24} />, path: "/receiving-material" }, 
-  // ✨ SMES (물류관제) 탭 추가
   { id: "smes", label: "SMES", icon: <Truck size={24} />, path: "/smes" }, 
+  // ✨ 아래 3개 메뉴 추가됨
+  { id: "insight", label: "인사이트", icon: <LineChart size={24} />, path: "/insight" }, 
+  { id: "action-history", label: "조치이력", icon: <History size={24} />, path: "/action-history" }, 
+  { id: "wearable-connect", label: "웨어러블 연결", icon: <Watch size={24} />, path: "/wearable-connect" }, 
 ];
 
 export default function Sidebar() {
