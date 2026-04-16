@@ -1,16 +1,89 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { getHistoryToneLabel } from '../model/helpers';
 import type { HistoryTone, RepairHistoryItem } from '../model/types';
 
+// API 응답 타입 정의
+interface ApiRepairLog {
+  id: number;
+  event_uuid: string;
+  device_id: string;
+  user_id: number;
+  defect_type_id: number;
+  resolution_report_stt: string;
+  repair_time_hours: number;
+  created_at: string;
+  completed_at: string | null;
+  filename: string | null;
+  worker_name: string;
+  repair_duration_min: string | null;
+}
+
+interface ApiResponse {
+  success: boolean;
+  data: {
+    totalCount: number;
+    logs: ApiRepairLog[];
+    summary: {
+      completedCount: number;
+      pendingCount: number;
+    };
+  };
+}
+
 interface RepairHistoryPanelProps {
-  items: RepairHistoryItem[];
   selectedId: string;
   onSelect: (id: string) => void;
 }
 
-const RepairHistoryPanel = ({ items, selectedId, onSelect }: RepairHistoryPanelProps) => {
+const RepairHistoryPanel = ({ selectedId, onSelect }: RepairHistoryPanelProps) => {
+  const [items, setItems] = useState<RepairHistoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchRepairHistory = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('http://192.168.10.175:24828/api/DX_API006002', {
+          method: 'GET',
+        });
+        
+        const result: ApiResponse = await response.json();
+
+        if (result.success && result.data) {
+          // API 데이터를 UI 모델(RepairHistoryItem)에 맞게 변환
+          const mappedItems: RepairHistoryItem[] = result.data.logs.map((log) => {
+            const isCompleted = log.completed_at !== null;
+            
+            // 날짜 포맷팅 (YYYY-MM-DD HH:MM)
+            const dateObj = new Date(log.created_at);
+            const formattedTime = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+
+            return {
+              id: log.event_uuid, // UUID를 고유 식별자로 사용
+              title: `단말기(${log.device_id}) 결함 보고`, // 적절한 제목 생성
+              tone: (isCompleted ? 'normal' : 'processing') as HistoryTone,
+              time: formattedTime,
+              worker: log.worker_name,
+              action: isCompleted ? '조치 완료' : '처리 대기/진행 중',
+              detail: log.resolution_report_stt || '입력된 상세 조치 내역이 없습니다.',
+            };
+          });
+
+          setItems(mappedItems);
+        }
+      } catch (error) {
+        console.error('수리 이력 데이터를 불러오는데 실패했습니다:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRepairHistory();
+  }, []);
+
   return (
     <Panel>
       <PanelHeader>
@@ -21,37 +94,41 @@ const RepairHistoryPanel = ({ items, selectedId, onSelect }: RepairHistoryPanelP
       </PanelHeader>
 
       <HistoryList>
-        {items.map((item) => {
-          const selected = item.id === selectedId;
+        {isLoading ? (
+          <LoadingMessage>데이터를 불러오는 중입니다...</LoadingMessage>
+        ) : items.length === 0 ? (
+          <LoadingMessage>수리 이력이 없습니다.</LoadingMessage>
+        ) : (
+          items.map((item) => {
+            const selected = item.id === selectedId;
 
-          return (
-            <HistoryItem key={item.id}>
-              <HistoryCard 
-                type="button" 
-                $selected={selected} 
-                onClick={() => onSelect(item.id)}
-              >
-                {/* ✨ 카드 상단: 제목 + 상태 + 시간 배치 */}
-                <TopLine>
-                  <TitleGroup>
+            return (
+              <HistoryItem key={item.id}>
+                <HistoryCard 
+                  type="button" 
+                  $selected={selected} 
+                  onClick={() => onSelect(item.id)}
+                >
+                  {/* ✨ 카드 상단: 상태 버튼, 제목, 시간을 세로로 배치 */}
+                  <HeaderGroup>
                     <StatusPill $tone={item.tone}>{getHistoryToneLabel(item.tone)}</StatusPill>
                     <HistoryTitle>{item.title}</HistoryTitle>
-                  </TitleGroup>
-                  <TimeText>{item.time}</TimeText>
-                </TopLine>
+                    <TimeText>{item.time}</TimeText>
+                  </HeaderGroup>
 
-                {/* ✨ 중간 정보 라인 */}
-                <InfoGroup>
-                  <MetaLine>작업자: <span>{item.worker}</span></MetaLine>
-                  <MetaLine>조치: <span>{item.action}</span></MetaLine>
-                </InfoGroup>
+                  {/* ✨ 중간 정보 라인 */}
+                  <InfoGroup>
+                    <MetaLine>작업자: <span>{item.worker}</span></MetaLine>
+                    <MetaLine>조치: <span>{item.action}</span></MetaLine>
+                  </InfoGroup>
 
-                {/* ✨ 상세 내용 */}
-                <DetailLine>{item.detail}</DetailLine>
-              </HistoryCard>
-            </HistoryItem>
-          );
-        })}
+                  {/* ✨ 상세 내용 */}
+                  <DetailLine>{item.detail}</DetailLine>
+                </HistoryCard>
+              </HistoryItem>
+            );
+          })
+        )}
       </HistoryList>
     </Panel>
   );
@@ -110,6 +187,14 @@ const HistoryList = styled.div`
   &::-webkit-scrollbar-thumb { background: rgba(133, 154, 194, 0.2); border-radius: 999px; }
 `;
 
+const LoadingMessage = styled.div`
+  padding: 20px;
+  text-align: center;
+  color: #7f95c0;
+  font-size: 15px;
+  font-weight: 600;
+`;
+
 const HistoryItem = styled.div`
   width: 100%;
 `;
@@ -136,32 +221,28 @@ const HistoryCard = styled.button<{ $selected: boolean }>`
   }
 `;
 
-const TopLine = styled.div`
+const HeaderGroup = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-`;
-
-const TitleGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-start; /* 왼쪽 정렬 */
+  gap: 10px; /* 요소들 사이의 세로 간격 */
+  margin-bottom: 16px;
 `;
 
 const HistoryTitle = styled.div`
   font-size: 18px;
   font-weight: 800;
   color: #ffffff;
-  word-break: keep-all;
+  word-break: keep-all; /* 단어 단위로 줄바꿈되도록 유지 */
+  line-height: 1.4; /* 세로 배열 시 읽기 편하도록 줄간격 추가 */
 `;
 
 const TimeText = styled.div`
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: #7f95c0;
-  flex-shrink: 0;
 `;
+
 
 const InfoGroup = styled.div`
   display: flex;

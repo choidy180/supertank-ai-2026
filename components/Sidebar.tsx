@@ -43,23 +43,20 @@ export default function Sidebar() {
       <Header $isExpanded={isExpanded}>
         <LogoWrapper href="/" $isExpanded={isExpanded}>
           <LogoIcon />
-          <LogoText $isExpanded={isExpanded}>SmartFactory</LogoText>
+          <LogoText $isExpanded={isExpanded}>스마트팩토리</LogoText>
         </LogoWrapper>
-        <ToggleButton onClick={() => {
-          setIsExpanded((prev) => !prev);
-        }}>
+        {/* ✨ 닫기/열기 토글 버튼 */}
+        <ToggleButton onClick={() => setIsExpanded((prev) => !prev)}>
           {isExpanded ? <ChevronLeft size={20} /> : <Menu size={20} />}
         </ToggleButton>
       </Header>
 
       <MenuList>
         {MENU_ITEMS.map((item) => {
-          // ✨ 구분선 렌더링 처리
           if (item.isDivider) {
             return <MenuDivider key={item.id} />;
           }
 
-          // item.path가 존재한다는 가정하에 안전하게 체크
           const isActive = item.path ? pathname.startsWith(item.path) : false;
           
           return (
@@ -83,6 +80,7 @@ export default function Sidebar() {
 // --- Styled Components ---
 
 const SidebarWrapper = styled.aside<{ $isExpanded: boolean }>`
+  /* ✨ 상태에 따라 너비 300px <-> 80px 전환 */
   width: ${({ $isExpanded }) => ($isExpanded ? "300px" : "80px")};
   min-width: ${({ $isExpanded }) => ($isExpanded ? "300px" : "80px")};
   flex-shrink: 0; 
@@ -112,8 +110,10 @@ const LogoWrapper = styled(Link)<{ $isExpanded: boolean }>`
   align-items: center;
   gap: 12px;
   overflow: hidden;
+  /* ✨ 접힐 때 로고 영역 숨김 처리 확실히 하기 */
   width: ${({ $isExpanded }) => ($isExpanded ? "200px" : "0px")};
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
+  pointer-events: ${({ $isExpanded }) => ($isExpanded ? "auto" : "none")};
   transition: width 0.3s ease, opacity 0.3s ease;
   white-space: nowrap;
   text-decoration: none;
@@ -149,7 +149,6 @@ const ToggleButton = styled.button`
   flex-shrink: 0;
   position: relative;
   z-index: 9999;
-  pointer-events: auto;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.15);
@@ -175,7 +174,6 @@ const MenuItem = styled.li`
   width: 100%;
 `;
 
-// ✨ 새롭게 추가된 구분선 컴포넌트
 const MenuDivider = styled.li`
   height: 1px;
   background-color: rgba(255, 255, 255, 0.1);
