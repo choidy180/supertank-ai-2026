@@ -1,34 +1,105 @@
 'use client';
 
 import styled, { css, keyframes } from 'styled-components';
-import { ScannerInfo } from '../model/types';
+
+import type { ScannerInfo } from '../model/types';
 
 interface MainScanningPanelProps {
   info: ScannerInfo;
   elapsedLabel: string;
 }
 
+export default function MainScanningPanel({
+  info,
+  elapsedLabel,
+}: MainScanningPanelProps) {
+  return (
+    <Section>
+      <TopBar>
+        <ViewPill>
+          <EyeIcon />
+          {info.mainViewLabel}
+        </ViewPill>
+
+        <OperatorPill>{info.operatorLabel}</OperatorPill>
+      </TopBar>
+
+      <ScannerFrame>
+        <Crosshair />
+
+        <ScanTop>
+          <ScanTitleGroup>
+            <ScanTitle>{info.sectionTitle}</ScanTitle>
+
+            <ScanInfoList>
+              <ScanInfoRow>
+                <InfoIcon $variant="folder" />
+                설비명: {info.equipmentName}
+              </ScanInfoRow>
+
+              <ScanInfoRow>
+                <InfoIcon $variant="list" />
+                점검항목: {info.completedStep}/{info.totalSteps} 완료
+              </ScanInfoRow>
+
+              <ScanInfoRow>
+                <InfoIcon $variant="clock" />
+                경과시간: {elapsedLabel}
+              </ScanInfoRow>
+            </ScanInfoList>
+          </ScanTitleGroup>
+
+          <ResultCard>
+            <ResultLabel>
+              <StatusDot />
+              VLM 분석결과
+            </ResultLabel>
+
+            <ResultValue>{info.statusLabel}</ResultValue>
+            <ResultMeta>{info.metricLabel}</ResultMeta>
+          </ResultCard>
+        </ScanTop>
+
+        <BottomMetaRow>
+          <MetaCard>
+            <MetaLabel>다음 점검</MetaLabel>
+            <MetaValue>{info.nextCheck}</MetaValue>
+          </MetaCard>
+
+          <MetaCard>
+            <MetaLabel>예상 종료</MetaLabel>
+            <MetaValue>{info.eta}</MetaValue>
+          </MetaCard>
+        </BottomMetaRow>
+      </ScannerFrame>
+    </Section>
+  );
+}
+
 const softPulse = keyframes`
   0% {
-    transform: translate(-50%, -50%) scale(0.98);
-    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.96);
+    opacity: 0.38;
   }
+
   50% {
     transform: translate(-50%, -50%) scale(1.04);
-    opacity: 0.82;
+    opacity: 0.72;
   }
+
   100% {
-    transform: translate(-50%, -50%) scale(0.98);
-    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.96);
+    opacity: 0.38;
   }
 `;
 
 const Section = styled.section`
   display: flex;
-  flex-direction: column; /* 세로 배치 */
+  flex: 1;
+  flex-direction: column;
   gap: 12px;
-  flex: 1; /* 부모 컨테이너 영역을 가득 채우도록 추가 */
   min-height: 0;
+  color: var(--color-text-primary);
 `;
 
 const TopBar = styled.div`
@@ -36,120 +107,138 @@ const TopBar = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 14px;
+  min-width: 0;
+
+  @media (max-width: 768px) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 `;
 
-const ViewPill = styled.div`
+const TopPillBase = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 10px;
   min-height: 48px;
   padding: 0 18px;
+  border: 1px solid var(--color-border);
   border-radius: 999px;
-  border: 1px solid rgba(112, 150, 233, 0.22);
-  background: rgba(15, 35, 78, 0.82);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
   font-size: 14px;
   font-weight: 800;
-  color: var(--monitor-white);
+  white-space: nowrap;
+`;
+
+const ViewPill = styled(TopPillBase)`
+  color: var(--color-accent);
 `;
 
 const EyeIcon = styled.span`
+  position: relative;
   width: 14px;
   height: 14px;
+  flex: 0 0 auto;
+  border: 2px solid var(--color-accent);
   border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.92);
-  position: relative;
 
   &::after {
-    content: '';
     position: absolute;
     inset: 3px;
     border-radius: 999px;
-    background: var(--monitor-blue);
-    box-shadow: 0 0 12px rgba(98, 163, 255, 0.7);
+    background: var(--color-accent);
+    content: '';
   }
 `;
 
-const OperatorPill = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 48px;
-  padding: 0 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(112, 150, 233, 0.18);
-  background: #130f40;
-  color: var(--monitor-white);
-  font-size: 14px;
-  font-weight: 800;
+const OperatorPill = styled(TopPillBase)`
+  color: var(--color-text-secondary);
 `;
 
 const ScannerFrame = styled.div`
   position: relative;
-  height: 100%;
   display: flex;
+  flex: 1;
   flex-direction: column;
-  justify-content: space-between; /* 위아래로 요소들을 끝에 붙임 (grid-template-rows 역할 대체) */
+  justify-content: space-between;
   gap: 18px;
-  border-radius: 18px;
-  border: 1px solid rgba(129, 166, 240, 0.22);
-  background: rgba(0,0,0,0.3);
-  padding: 24px 24px 24px;
+  min-height: 360px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 22px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+
+  @media (max-width: 768px) {
+    min-height: auto;
+    padding: 20px;
+    border-radius: 18px;
+  }
 `;
 
 const Crosshair = styled.div`
   position: absolute;
-  left: 50%;
   top: 50%;
+  left: 50%;
   width: 92px;
   height: 92px;
-  transform: translate(-50%, -50%);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  opacity: 0.8;
   pointer-events: none;
+  transform: translate(-50%, -50%);
 
   &::before,
   &::after {
-    content: '';
     position: absolute;
-    left: 50%;
     top: 50%;
-    background: rgba(148, 174, 236, 0.28);
+    left: 50%;
     border-radius: 999px;
+    background: var(--color-accent);
+    content: '';
     animation: ${softPulse} 2.4s ease-in-out infinite;
   }
 
   &::before {
     width: 44px;
-    height: 6px;
-    transform: translate(-50%, -50%);
+    height: 4px;
   }
 
   &::after {
-    width: 6px;
+    width: 4px;
     height: 44px;
-    transform: translate(-50%, -50%);
   }
 `;
 
 const ScanTop = styled.div`
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
+  min-width: 0;
+
+  @media (max-width: 980px) {
+    flex-direction: column;
+  }
 `;
 
 const ScanTitleGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
 `;
 
 const ScanTitle = styled.div`
+  color: var(--color-accent);
   font-size: clamp(34px, 3vw, 60px);
   font-weight: 800;
-  letter-spacing: -0.05em;
   line-height: 1;
-  color: rgba(117, 170, 255, 0.94);
-  text-shadow: 0 0 30px rgba(95, 155, 255, 0.22);
+  letter-spacing: -0.05em;
+  word-break: keep-all;
 `;
 
 const ScanInfoList = styled.div`
@@ -162,96 +251,96 @@ const ScanInfoRow = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  color: var(--monitor-white);
+  color: var(--color-text-primary);
   font-size: 24px;
   font-weight: 600;
+  line-height: 1.35;
+  word-break: keep-all;
+
+  @media (max-width: 768px) {
+    align-items: flex-start;
+    font-size: 18px;
+  }
 `;
 
 const InfoIcon = styled.span<{ $variant: 'folder' | 'list' | 'clock' }>`
-  /* ... 기존 코드와 동일 ... */
+  position: relative;
   width: 18px;
   height: 18px;
-  position: relative;
-  flex-shrink: 0;
-  opacity: 0.96;
+  flex: 0 0 auto;
+  color: var(--color-text-secondary);
 
   ${({ $variant }) => {
     if ($variant === 'folder') {
       return css`
         &::before {
-          content: '';
           position: absolute;
-          left: 0;
+          top: 5px;
           right: 0;
           bottom: 1px;
-          top: 5px;
-          border-radius: 2px;
-          background: rgba(255, 255, 255, 0.94);
+          left: 0;
+          border-radius: 3px;
+          background: currentColor;
+          content: '';
         }
 
         &::after {
-          content: '';
           position: absolute;
-          left: 1px;
           top: 2px;
+          left: 1px;
           width: 8px;
           height: 5px;
-          border-radius: 2px 2px 0 0;
-          background: rgba(255, 255, 255, 0.94);
+          border-radius: 3px 3px 0 0;
+          background: currentColor;
+          content: '';
         }
       `;
     }
 
     if ($variant === 'list') {
       return css`
-        &::before,
-        &::after {
-          content: '';
-          position: absolute;
-          left: 5px;
-          right: 0;
-          height: 2px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.94);
-        }
+        border-top: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
 
         &::before {
-          top: 5px;
-          box-shadow: 0 5px 0 rgba(255, 255, 255, 0.94), 0 10px 0 rgba(255, 255, 255, 0.94);
-        }
-
-        &::after {
-          display: none;
+          position: absolute;
+          top: 7px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          border-radius: 999px;
+          background: currentColor;
+          content: '';
         }
       `;
     }
 
     return css`
+      border: 2px solid currentColor;
       border-radius: 999px;
-      border: 2px solid rgba(255, 255, 255, 0.94);
 
       &::before {
-        content: '';
         position: absolute;
+        top: 3px;
+        left: 7px;
         width: 2px;
         height: 5px;
-        left: 8px;
-        top: 3px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.94);
+        background: currentColor;
+        content: '';
       }
 
       &::after {
-        content: '';
         position: absolute;
+        top: 8px;
+        left: 7px;
         width: 5px;
         height: 2px;
-        left: 8px;
-        top: 8px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.94);
-        transform-origin: left center;
+        background: currentColor;
+        content: '';
         transform: rotate(35deg);
+        transform-origin: left center;
       }
     `;
   }}
@@ -264,35 +353,58 @@ const ResultCard = styled.div`
   gap: 10px;
   min-width: 180px;
   padding: 18px 20px;
+  border: 1px solid var(--color-border);
   border-radius: 20px;
-  border: 1px solid rgba(104, 150, 255, 0.14);
-  background: linear-gradient(180deg, rgba(5, 16, 41, 0.92) 0%, rgba(3, 11, 31, 0.96) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+
+  @media (max-width: 980px) {
+    width: 100%;
+  }
 `;
 
 const ResultLabel = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary);
   font-size: 14px;
-  color: var(--monitor-text-secondary);
+  font-weight: 700;
+  line-height: 1.35;
+`;
+
+const StatusDot = styled.span`
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--color-success);
 `;
 
 const ResultValue = styled.div`
+  color: var(--color-success);
   font-size: 28px;
   font-weight: 900;
   line-height: 1.2;
-  color: var(--monitor-green);
+  letter-spacing: -0.03em;
+  word-break: keep-all;
 `;
 
 const ResultMeta = styled.div`
+  color: var(--color-text-primary);
   font-size: 14px;
   font-weight: 700;
-  color: var(--monitor-white);
+  line-height: 1.4;
+  word-break: keep-all;
 `;
 
 const BottomMetaRow = styled.div`
-  display: flex; /* 가로 배치 */
+  position: relative;
+  z-index: 1;
+  display: flex;
   gap: 12px;
+  min-width: 0;
 
-  /* 각 카드가 반반(1:1) 비율로 공간을 차지하도록 설정 */
   > * {
     flex: 1;
     min-width: 0;
@@ -305,79 +417,43 @@ const BottomMetaRow = styled.div`
 
 const MetaCard = styled.div`
   display: flex;
+  height: 126px;
   flex-direction: column;
-  justify-content: center; /* 세로 중앙 정렬 */
+  justify-content: center;
   gap: 6px;
-  padding: 8px 24px; /* 위아래 패딩을 없애고 높이로 제어 */
-  height: 126px; /* 💡 여기서 원하시는 박스 높이로 조절하세요 (예: 60px, 80px 등) */
+  padding: 8px 24px;
+  border: 1px solid var(--color-border);
   border-radius: 18px;
-  background: rgba(70, 98, 181, 0.34);
-  border: 1px solid rgba(147, 176, 243, 0.12);
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 96px;
+    padding: 18px;
+  }
 `;
 
 const MetaLabel = styled.div`
+  color: var(--color-text-secondary);
   font-size: 24px;
   font-weight: 600;
-  color: #c7ecee;
+  line-height: 1.35;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const MetaValue = styled.div`
+  color: var(--color-text-primary);
   font-size: 28px;
   font-weight: 800;
-  color: var(--monitor-white);
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  word-break: keep-all;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+  }
 `;
-
-export default function MainScanningPanel({ info, elapsedLabel }: MainScanningPanelProps) {
-  // 컴포넌트 JSX는 동일하게 유지
-  return (
-    <Section>
-      <TopBar>
-        <ViewPill>
-          <EyeIcon />
-          {info.mainViewLabel}
-        </ViewPill>
-        <OperatorPill>{info.operatorLabel}</OperatorPill>
-      </TopBar>
-
-      <ScannerFrame>
-          <Crosshair />
-
-          <ScanTop>
-            <ScanTitleGroup>
-              <ScanTitle>{info.sectionTitle}</ScanTitle>
-
-              <ScanInfoList>
-                <ScanInfoRow>
-                  <InfoIcon $variant="folder" /> 설비명: {info.equipmentName}
-                </ScanInfoRow>
-                <ScanInfoRow>
-                  <InfoIcon $variant="list" /> 점검항목: {info.completedStep}/{info.totalSteps} 완료
-                </ScanInfoRow>
-                <ScanInfoRow>
-                  <InfoIcon $variant="clock" /> 경과시간: {elapsedLabel}
-                </ScanInfoRow>
-              </ScanInfoList>
-            </ScanTitleGroup>
-
-            <ResultCard>
-              <ResultLabel>VLM 분석결과</ResultLabel>
-              <ResultValue>{info.statusLabel}</ResultValue>
-              <ResultMeta>{info.metricLabel}</ResultMeta>
-            </ResultCard>
-          </ScanTop>
-
-          <BottomMetaRow>
-            <MetaCard>
-              <MetaLabel>다음 점검</MetaLabel>
-              <MetaValue>{info.nextCheck}</MetaValue>
-            </MetaCard>
-
-            <MetaCard>
-              <MetaLabel>예상 종료</MetaLabel>
-              <MetaValue>{info.eta}</MetaValue>
-            </MetaCard>
-          </BottomMetaRow>
-        </ScannerFrame>
-    </Section>
-  );
-}

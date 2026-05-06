@@ -7,21 +7,23 @@ import type { RepairTimeStat } from '../model/types';
 interface RepairTimePanelProps {
   items: RepairTimeStat[];
   maxValue: number;
+  // ✨ 테마 프롭스 추가
+  isDark: boolean;
 }
 
-const RepairTimePanel = ({ items, maxValue }: RepairTimePanelProps) => {
+const RepairTimePanel = ({ items, maxValue, isDark }: RepairTimePanelProps) => {
   return (
-    <PanelCard>
+    <PanelCard $isDark={isDark}>
       <PanelHeader>
         <div>
-          <PanelTitle>평균 수리 시간</PanelTitle>
+          <PanelTitle $isDark={isDark}>평균 수리 시간</PanelTitle>
         </div>
-        <MetaPill>최근 7일</MetaPill>
+        <MetaPill $isDark={isDark}>최근 7일</MetaPill>
       </PanelHeader>
 
-      {/* ✨ 차트가 남는 공간을 전부 밀고 나가도록 컨테이너로 감쌈 */}
       <ChartContainer>
-        <BarChart items={items} maxValue={maxValue} />
+        {/* ✨ 하위 BarChart 컴포넌트에도 테마를 적용하기 위해 isDark를 넘겨줍니다. */}
+        <BarChart items={items} maxValue={maxValue} isDark={isDark} />
       </ChartContainer>
     </PanelCard>
   );
@@ -29,20 +31,24 @@ const RepairTimePanel = ({ items, maxValue }: RepairTimePanelProps) => {
 
 // --- Styled Components ---
 
-const PanelCard = styled.section`
-  /* ✨ 기존 grid에서 flex-column으로 변경하여 세로 공간을 유연하게 배분 */
+const PanelCard = styled.section<{ $isDark: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: 12px; /* ✨ 상단 헤더와 차트 사이의 간격을 18px -> 12px로 대폭 축소 */
-  flex: 1; /* ✨ 패널 자체가 부모의 남은 세로 공간을 전부 차지하도록 설정 */
+  gap: 12px;
+  flex: 1; 
   min-height: 0;
-  padding: 20px;
+  padding: 24px; /* 다른 패널과 디자인 일치 */
   border-radius: 24px;
-  border: 1px solid var(--border-soft);
-  background: linear-gradient(180deg, rgba(9, 19, 39, 0.96) 0%, rgba(7, 15, 31, 0.98) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.03),
-    0 18px 48px rgba(0, 0, 0, 0.22);
+  
+  /* ✨ 그라데이션 완벽 제거: 깔끔한 단색 배경 */
+  background-color: ${({ $isDark }) => ($isDark ? '#1c1c1e' : '#ffffff')};
+  border: 1px solid ${({ $isDark }) => ($isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)')};
+
+  box-shadow: ${({ $isDark }) => 
+    $isDark 
+      ? '0 4px 16px rgba(0, 0, 0, 0.2)' 
+      : '0 4px 16px rgba(0, 0, 0, 0.03), 0 1px 4px rgba(0, 0, 0, 0.02)'};
+  transition: all 0.3s ease;
 `;
 
 const PanelHeader = styled.div`
@@ -50,40 +56,34 @@ const PanelHeader = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
-  flex-shrink: 0; /* ✨ 차트가 커져도 헤더 영역은 찌그러지지 않도록 보호 */
+  flex-shrink: 0; 
 `;
 
-const PanelTitle = styled.h3`
+const PanelTitle = styled.h3<{ $isDark: boolean }>`
   margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #ffffff; /* ✨ 다크 테마에서 확실히 보이게 흰색 강제 */
-`;
-
-const PanelCaption = styled.p`
-  margin: 6px 0 0;
   font-size: 20px;
-  line-height: 1.7;
-  color: var(--text-secondary);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: ${({ $isDark }) => ($isDark ? '#f5f5f7' : '#1d1d1f')};
 `;
 
-const MetaPill = styled.div`
+const MetaPill = styled.div<{ $isDark: boolean }>`
   display: inline-flex;
   align-items: center;
   min-height: 34px;
-  padding: 6px 20px;
+  padding: 0 16px;
   border-radius: 999px;
-  border: 1px solid rgba(86, 212, 255, 0.18);
-  background: rgba(86, 212, 255, 0.08);
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 700;
-  color: #c7ecee;
   white-space: nowrap;
+
+  /* 애플 블루 톤으로 통일 */
+  background: ${({ $isDark }) => ($isDark ? 'rgba(10, 132, 255, 0.1)' : 'rgba(0, 122, 255, 0.08)')};
+  border: 1px solid ${({ $isDark }) => ($isDark ? 'rgba(10, 132, 255, 0.2)' : 'rgba(0, 122, 255, 0.2)')};
+  color: ${({ $isDark }) => ($isDark ? '#5ac8fa' : '#007aff')};
 `;
 
 const ChartContainer = styled.div`
-  /* ✨ 빈 공간 없이 차트를 위아래로 쫙 늘려주는 마법의 속성 */
   flex: 1; 
   min-height: 0;
   display: flex;

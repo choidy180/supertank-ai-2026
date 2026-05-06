@@ -1,15 +1,17 @@
+'use client';
+
 import type { FC } from 'react';
+
+import { useThemeStore } from '@/store/useThemeStore';
 
 import {
   AutoRunButton,
-  Eyebrow,
   HeaderActions,
   HeaderBar,
   HeaderPill,
   LiveDot,
   MainTitle,
-  SubText,
-  TitleBlock
+  TitleBlock,
 } from './styles';
 
 interface HeaderSectionProps {
@@ -25,10 +27,12 @@ const HeaderSection: FC<HeaderSectionProps> = ({
   warningCount,
   errorCount,
   autoRun,
-  onToggleAutoRun
+  onToggleAutoRun,
 }) => {
+  const isDark = useThemeStore((state) => state.isDark);
+
   return (
-    <HeaderBar>
+    <HeaderBar $isDark={isDark}>
       <TitleBlock>
         <MainTitle>타임체크 대시보드</MainTitle>
       </TitleBlock>
@@ -38,6 +42,7 @@ const HeaderSection: FC<HeaderSectionProps> = ({
           <LiveDot />
           실시간 모니터링
         </HeaderPill>
+
         <HeaderPill $tone="ok">정상 {okCount}</HeaderPill>
         <HeaderPill $tone="warning">주의 {warningCount}</HeaderPill>
         <HeaderPill $tone="error">중단 {errorCount}</HeaderPill>
@@ -45,6 +50,7 @@ const HeaderSection: FC<HeaderSectionProps> = ({
         <AutoRunButton
           type="button"
           $active={autoRun}
+          aria-pressed={autoRun}
           onClick={onToggleAutoRun}
         >
           {autoRun ? '자동 시뮬레이션 ON' : '자동 시뮬레이션 OFF'}

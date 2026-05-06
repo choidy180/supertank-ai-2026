@@ -2,6 +2,32 @@ import styled from 'styled-components';
 
 import { buttonReset } from '../shared/styles';
 
+type TimelineLevel = 'ok' | 'warning' | 'error';
+
+type ToneVars = {
+  color: string;
+  border: string;
+  background: string;
+};
+
+const TIMELINE_LEVEL_VARS: Record<TimelineLevel, ToneVars> = {
+  ok: {
+    color: 'var(--color-success)',
+    border: 'var(--color-success)',
+    background: 'var(--color-success-soft)',
+  },
+  warning: {
+    color: 'var(--color-warning)',
+    border: 'var(--color-warning)',
+    background: 'var(--color-warning-soft)',
+  },
+  error: {
+    color: 'var(--color-error)',
+    border: 'var(--color-error)',
+    background: 'var(--color-error-soft)',
+  },
+};
+
 export const FilterRow = styled.div`
   display: flex;
   align-items: center;
@@ -12,23 +38,42 @@ export const FilterRow = styled.div`
 
 export const FilterChip = styled.button<{ $active: boolean }>`
   ${buttonReset};
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 40px;
   padding: 0 16px;
-  border-radius: 999px;
   border: 1px solid
     ${({ $active }) =>
-      $active ? 'rgba(74, 140, 255, 0.36)' : 'rgba(133, 154, 194, 0.16)'};
+      $active ? 'var(--color-accent)' : 'var(--color-border)'};
+  border-radius: 999px;
   background: ${({ $active }) =>
-    $active ? 'rgba(74, 140, 255, 0.12)' : 'rgba(15, 28, 53, 0.76)'};
+    $active ? 'var(--color-accent-soft)' : 'var(--color-surface-muted)'};
+  color: ${({ $active }) =>
+    $active ? 'var(--color-accent)' : 'var(--color-text-secondary)'};
   font-size: 16px;
   font-weight: 700;
-  color: #eef3ff;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  white-space: nowrap;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease;
 
   &:hover {
+    transform: translateY(-1px);
+    border-color: ${({ $active }) =>
+      $active ? 'var(--color-accent)' : 'var(--color-border-strong)'};
     background: ${({ $active }) =>
-      $active ? 'rgba(74, 140, 255, 0.2)' : 'rgba(133, 154, 194, 0.1)'};
+      $active ? 'var(--color-accent-soft)' : 'var(--color-surface-hover)'};
+    color: ${({ $active }) =>
+      $active ? 'var(--color-accent)' : 'var(--color-text-primary)'};
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
   }
 `;
 
@@ -38,20 +83,26 @@ export const TimelineWrap = styled.div`
   max-height: calc(100vh - 100px);
   overflow-y: auto;
   padding-right: 8px;
-  
+
   &::-webkit-scrollbar {
     width: 6px;
   }
+
   &::-webkit-scrollbar-thumb {
-    background: rgba(133, 154, 194, 0.3);
     border-radius: 999px;
+    background: var(--color-border-strong);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 `;
 
 export const TimelineList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px; /* 카드 사이의 간격 */
+  gap: 16px;
+  min-height: 100%;
 `;
 
 export const TimelineItem = styled.div`
@@ -60,34 +111,44 @@ export const TimelineItem = styled.div`
 
 export const TimelineCardButton = styled.button<{ $focused: boolean }>`
   ${buttonReset};
+
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 20px; /* 내부 여백 시원하게 확보 */
-  border-radius: 16px;
+  padding: 20px;
   border: 1px solid
     ${({ $focused }) =>
-      $focused ? 'rgba(74, 140, 255, 0.4)' : 'rgba(133, 154, 194, 0.15)'};
+      $focused ? 'var(--color-accent)' : 'var(--color-border)'};
+  border-radius: 16px;
   background: ${({ $focused }) =>
-    $focused ? 'rgba(24, 45, 87, 0.92)' : 'rgba(18, 32, 60, 0.76)'};
+    $focused ? 'var(--color-accent-soft)' : 'var(--color-surface-muted)'};
+  color: var(--color-text-primary);
   text-align: left;
-  cursor: pointer;
   transition:
     transform 160ms ease,
     border-color 160ms ease,
-    background 160ms ease;
+    background 160ms ease,
+    color 160ms ease;
 
   &:hover {
     transform: translateY(-2px);
+    border-color: ${({ $focused }) =>
+      $focused ? 'var(--color-accent)' : 'var(--color-border-strong)'};
     background: ${({ $focused }) =>
-      $focused ? 'rgba(24, 45, 87, 0.92)' : 'rgba(24, 42, 77, 0.8)'};
+      $focused ? 'var(--color-accent-soft)' : 'var(--color-surface-hover)'};
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
   }
 `;
 
 export const TimelineCardTop = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between; /* 양끝 정렬 */
+  justify-content: space-between;
+  gap: 12px;
   width: 100%;
   margin-bottom: 12px;
 `;
@@ -96,87 +157,67 @@ export const TitleGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 `;
 
 export const TimelineTitle = styled.div`
+  color: var(--color-text-primary);
   font-size: 18px;
   font-weight: 800;
-  color: #ffffff;
-  word-break: keep-all; /* 단어 단위 줄바꿈 유지 */
+  line-height: 1.35;
+  word-break: keep-all;
 `;
 
-export const TimelineBadge = styled.div<{ $level: 'ok' | 'warning' | 'error' }>`
+export const TimelineBadge = styled.div<{ $level: TimelineLevel }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   min-height: 30px;
   padding: 0 12px;
+  border: 1px solid ${({ $level }) => TIMELINE_LEVEL_VARS[$level].border};
   border-radius: 999px;
-  flex-shrink: 0; /* 배지 찌그러짐 방지 */
-  white-space: nowrap; 
-
-  border: 1px solid
-    ${({ $level }) => {
-      switch ($level) {
-        case 'ok':
-          return 'rgba(46, 209, 129, 0.3)';
-        case 'warning':
-          return 'rgba(255, 182, 72, 0.3)';
-        case 'error':
-          return 'rgba(255, 92, 108, 0.3)';
-        default:
-          return 'rgba(133, 154, 194, 0.2)';
-      }
-    }};
-  background:
-    ${({ $level }) => {
-      switch ($level) {
-        case 'ok':
-          return 'rgba(46, 209, 129, 0.15)';
-        case 'warning':
-          return 'rgba(255, 182, 72, 0.15)';
-        case 'error':
-          return 'rgba(255, 92, 108, 0.15)';
-        default:
-          return 'rgba(15, 28, 53, 0.76)';
-      }
-    }};
+  background: ${({ $level }) => TIMELINE_LEVEL_VARS[$level].background};
+  color: ${({ $level }) => TIMELINE_LEVEL_VARS[$level].color};
   font-size: 14px;
   font-weight: 800;
-  color: #ffffff;
+  white-space: nowrap;
 `;
 
 export const TimelineTime = styled.div`
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
   font-size: 15px;
   font-weight: 700;
-  color: #7f95c0;
-  flex-shrink: 0; /* 시간 텍스트 찌그러짐 방지 */
+  line-height: 1.4;
 `;
 
 export const TimelineDetail = styled.div`
+  margin-bottom: 12px;
+  color: var(--color-text-secondary);
   font-size: 16px;
   line-height: 1.6;
-  color: #c4d4f2;
-  margin-bottom: 12px;
   word-break: keep-all;
 `;
 
 export const TimelineMeta = styled.div`
+  color: var(--color-text-tertiary);
   font-size: 14px;
-  color: #9ab0da;
+  line-height: 1.5;
   word-break: keep-all;
 `;
 
 export const EmptyState = styled.div`
   display: grid;
   place-items: center;
-  min-height: 240px;
+  flex: 1;
+  min-height: 320px;
   padding: 24px;
+  border: 1px dashed var(--color-border-strong);
   border-radius: 20px;
-  border: 1px dashed rgba(133, 154, 194, 0.2);
-  background: rgba(16, 28, 53, 0.5);
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
   text-align: center;
   font-size: 16px;
   line-height: 1.8;
-  color: #9ab0da;
 `;

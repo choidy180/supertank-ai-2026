@@ -4,54 +4,65 @@ import styled from 'styled-components';
 import DefectTypePanel from '../DefectTypePanel';
 import RepairTimePanel from '../RepairTimePanel';
 import SummaryCards from '../SummaryCards';
-import type { DefectTypeStat, RepairTimeStat, SummaryCard } from '../model/types';
+import type { RepairTimeStat } from '../model/types'; 
 
 interface OverviewPanelProps {
-  summaryCards: SummaryCard[];
-  defectTypeStats: DefectTypeStat[];
   repairTimeStats: RepairTimeStat[];
-  totalDefectValue: number;
   maxRepairHour: number;
-  largestDefectLabel: string;
+  // ✨ 테마 상태를 받기 위한 isDark 프롭스 추가
+  isDark: boolean;
 }
 
 const OverviewPanel = ({
-  summaryCards,
-  defectTypeStats,
   repairTimeStats,
-  totalDefectValue,
   maxRepairHour,
-  largestDefectLabel
+  isDark
 }: OverviewPanelProps) => {
   return (
-    <Panel>
+    <Panel $isDark={isDark}>
       <PanelHeader>
-        <MetaPill>실시간 운영 보드</MetaPill>
+        <MetaPill $isDark={isDark}>실시간 운영 보드</MetaPill>
       </PanelHeader>
 
-      <SummaryCards items={summaryCards} />
+      {/* 내부 컴포넌트들에도 테마 상태를 전달합니다 */}
+      <SummaryCards isDark={isDark} />
 
       <ChartGrid>
-        <DefectTypePanel items={defectTypeStats} total={totalDefectValue} topLabel={largestDefectLabel} />
-        <RepairTimePanel items={repairTimeStats} maxValue={maxRepairHour} />
+        <DefectTypePanel isDark={isDark} />
+        <RepairTimePanel 
+          items={repairTimeStats} 
+          maxValue={maxRepairHour} 
+          isDark={isDark} 
+        />
       </ChartGrid>
     </Panel>
   );
 };
 
-const Panel = styled.section`
+// --- Styled Components ---
+
+const Panel = styled.section<{ $isDark: boolean }>`
   min-height: 0;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
   gap: 18px;
   padding: 24px;
-  border-radius: 30px;
-  border: 1px solid var(--border-soft);
-  background: linear-gradient(180deg, rgba(7, 16, 34, 0.96) 0%, rgba(4, 10, 22, 0.98) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.03),
-    0 28px 72px rgba(0, 0, 0, 0.34);
+  border-radius: 28px; /* 애플 스타일의 부드러운 라운딩 */
+  
+  /* 테마에 따른 배경, 테두리, 부드러운 그림자 효과 */
+  border: 1px solid ${({ $isDark }) => 
+    $isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)'};
+  background: ${({ $isDark }) => 
+    $isDark 
+      ? 'linear-gradient(180deg, #1c1c1e 0%, #151516 100%)' 
+      : '#ffffff'};
+  box-shadow: ${({ $isDark }) => 
+    $isDark 
+      ? '0 20px 40px rgba(0, 0, 0, 0.4)' 
+      : '0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02)'};
+  
   overflow: hidden;
+  transition: all 0.3s ease;
 `;
 
 const PanelHeader = styled.div`
@@ -61,32 +72,23 @@ const PanelHeader = styled.div`
   gap: 14px;
 `;
 
-const PanelTitle = styled.h2`
-  margin: 0;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-`;
-
-const PanelCaption = styled.p`
-  margin: 8px 0 0;
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--text-secondary);
-`;
-
-const MetaPill = styled.div`
+const MetaPill = styled.div<{ $isDark: boolean }>`
   display: inline-flex;
   align-items: center;
   min-height: 38px;
-  padding: 0 14px;
+  padding: 0 16px;
   border-radius: 999px;
-  border: 1px solid rgba(79, 143, 255, 0.22);
-  background: rgba(79, 143, 255, 0.1);
-  font-size: 20px;
+  
+  /* HeaderSection의 블루톤 테마와 통일감을 주는 스타일 */
+  border: 1px solid ${({ $isDark }) => ($isDark ? 'rgba(10, 132, 255, 0.2)' : 'rgba(0, 122, 255, 0.2)')};
+  background: ${({ $isDark }) => ($isDark ? 'rgba(10, 132, 255, 0.1)' : 'rgba(0, 122, 255, 0.08)')};
+  color: ${({ $isDark }) => ($isDark ? '#5ac8fa' : '#007aff')};
+  
+  font-size: 18px;
   font-weight: 700;
-  color: #ffffff;
+  letter-spacing: -0.02em;
   white-space: nowrap;
+  transition: all 0.3s ease;
 `;
 
 const ChartGrid = styled.div`

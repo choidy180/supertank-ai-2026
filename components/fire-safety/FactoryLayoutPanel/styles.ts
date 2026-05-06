@@ -1,11 +1,12 @@
 import styled from 'styled-components';
+
 import {
   CenterPanel,
   PanelCaption,
   PanelHeader,
   PanelTitle,
   PanelTitleGroup,
-  buttonReset
+  buttonReset,
 } from '../shared/styles';
 
 export {
@@ -13,7 +14,33 @@ export {
   PanelCaption,
   PanelHeader,
   PanelTitle,
-  PanelTitleGroup
+  PanelTitleGroup,
+};
+
+type ZoneTone = 'green' | 'amber' | 'red';
+
+type ToneVars = {
+  color: string;
+  background: string;
+  border: string;
+};
+
+const ZONE_TONE_VARS: Record<ZoneTone, ToneVars> = {
+  green: {
+    color: 'var(--color-success)',
+    background: 'var(--color-success-soft)',
+    border: 'var(--color-success)',
+  },
+  amber: {
+    color: 'var(--color-warning)',
+    background: 'var(--color-warning-soft)',
+    border: 'var(--color-warning)',
+  },
+  red: {
+    color: 'var(--color-error)',
+    background: 'var(--color-error-soft)',
+    border: 'var(--color-error)',
+  },
 };
 
 export const LegendRow = styled.div`
@@ -23,9 +50,10 @@ export const LegendRow = styled.div`
   gap: 12px;
   flex-wrap: wrap;
   padding: 14px 16px;
+  border: 1px solid var(--color-border);
   border-radius: 18px;
-  border: 1px solid rgba(132, 154, 199, 0.12);
-  background: rgba(17, 30, 56, 0.72);
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
 `;
 
 export const LegendGroup = styled.div`
@@ -39,46 +67,24 @@ export const LegendItem = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  color: var(--color-text-primary);
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-primary);
+  line-height: 1.3;
 `;
 
-export const LegendDot = styled.span<{ $tone: 'green' | 'amber' | 'red' }>`
+export const LegendDot = styled.span<{ $tone: ZoneTone }>`
   width: 10px;
   height: 10px;
+  flex: 0 0 auto;
   border-radius: 999px;
-  background:
-    ${({ $tone }) => {
-      switch ($tone) {
-        case 'green':
-          return 'var(--green)';
-        case 'amber':
-          return 'var(--amber)';
-        case 'red':
-          return 'var(--red)';
-        default:
-          return 'var(--blue)';
-      }
-    }};
-  box-shadow:
-    ${({ $tone }) => {
-      switch ($tone) {
-        case 'green':
-          return '0 0 12px rgba(47, 209, 132, 0.58)';
-        case 'amber':
-          return '0 0 12px rgba(255, 190, 87, 0.56)';
-        case 'red':
-          return '0 0 12px rgba(255, 105, 119, 0.56)';
-        default:
-          return '0 0 12px rgba(91, 156, 255, 0.56)';
-      }
-    }};
+  background: ${({ $tone }) => ZONE_TONE_VARS[$tone].color};
 `;
 
 export const LegendMeta = styled.div`
+  color: var(--color-text-secondary);
   font-size: 16px;
-  color: #c7ecee;
+  line-height: 1.4;
 `;
 
 export const ZoneGrid = styled.div`
@@ -88,6 +94,23 @@ export const ZoneGrid = styled.div`
   min-height: 0;
   overflow: auto;
   padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--color-border-strong);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  @media (max-width: 1180px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const ZoneCard = styled.div<{ $selected: boolean }>`
@@ -96,16 +119,25 @@ export const ZoneCard = styled.div<{ $selected: boolean }>`
   gap: 10px;
   min-height: 240px;
   padding: 16px;
-  border-radius: 22px;
   border: 1px solid
     ${({ $selected }) =>
-      $selected
-        ? 'rgba(91, 156, 255, 0.32)'
-        : 'rgba(132, 154, 199, 0.12)'};
+      $selected ? 'var(--color-accent)' : 'var(--color-border)'};
+  border-radius: 22px;
   background: ${({ $selected }) =>
-    $selected ? 'rgba(18, 35, 67, 0.94)' : 'rgba(14, 26, 49, 0.82)'};
-  box-shadow: ${({ $selected }) =>
-    $selected ? '0 18px 40px rgba(0, 0, 0, 0.24)' : 'none'};
+    $selected ? 'var(--color-accent-soft)' : 'var(--color-surface-muted)'};
+  color: var(--color-text-primary);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: ${({ $selected }) =>
+      $selected ? 'var(--color-accent)' : 'var(--color-border-strong)'};
+    background: ${({ $selected }) =>
+      $selected ? 'var(--color-accent-soft)' : 'var(--color-surface-hover)'};
+  }
 `;
 
 export const ZoneTop = styled.div`
@@ -113,69 +145,72 @@ export const ZoneTop = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  min-width: 0;
 `;
 
 export const ZoneTitleGroup = styled.div`
   display: grid;
   gap: 4px;
+  min-width: 0;
 `;
 
 export const ZoneName = styled.div`
+  color: var(--color-text-primary);
   font-size: 20px;
   font-weight: 800;
+  line-height: 1.3;
   letter-spacing: -0.03em;
-  color: var(--text-strong);
+  word-break: keep-all;
 `;
 
 export const ZoneMeta = styled.div`
+  color: var(--color-text-secondary);
   font-size: 18px;
   line-height: 1.5;
-  color: #c7ecee;
+  word-break: keep-all;
 `;
 
 export const ZoneBadge = styled.div`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 30px;
   padding: 0 10px;
+  border: 1px solid var(--color-border);
   border-radius: 999px;
-  border: 1px solid rgba(132, 154, 199, 0.16);
-  background: rgba(91, 156, 255, 0.08);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
   font-size: 16px;
   font-weight: 600;
-  color: var(--text-primary);
+  white-space: nowrap;
 `;
 
 export const MapArea = styled.div`
   position: relative;
   min-height: 0;
-  border-radius: 18px;
-  border: 1px solid rgba(132, 154, 199, 0.18);
-  background:
-    linear-gradient(180deg, rgba(12, 22, 40, 0.9) 0%, rgba(8, 16, 31, 0.92) 100%);
   overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: var(--color-surface);
 `;
 
 export const GridLayer = styled.div`
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(to right, rgba(132, 154, 199, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(132, 154, 199, 0.08) 1px, transparent 1px);
-  background-size: 14.285% 20%;
-  opacity: 0.82;
+  pointer-events: none;
+  background: transparent;
 `;
 
 export const AxisLabelX = styled.div`
   position: absolute;
-  left: 14px;
   right: 14px;
   bottom: 8px;
+  left: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: var(--color-text-tertiary);
   font-size: 16px;
-  color: var(--text-muted);
   pointer-events: none;
 `;
 
@@ -188,8 +223,8 @@ export const AxisLabelY = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
+  color: var(--color-text-tertiary);
   font-size: 16px;
-  color: var(--text-muted);
   pointer-events: none;
 `;
 
@@ -197,57 +232,43 @@ export const AxisCorner = styled.div`
   position: absolute;
   left: 12px;
   bottom: 8px;
+  color: var(--color-text-tertiary);
   font-size: 15px;
   font-weight: 600;
-  color: rgba(245, 248, 255, 0.56);
   pointer-events: none;
 `;
 
 export const MarkerButton = styled.button<{
-  $tone: 'green' | 'amber' | 'red';
+  $tone: ZoneTone;
   $selected: boolean;
 }>`
   ${buttonReset};
+
   position: absolute;
   display: grid;
   place-items: center;
   width: 28px;
   height: 28px;
+  border: 2px solid var(--color-surface);
   border-radius: 999px;
+  background: ${({ $tone }) => ZONE_TONE_VARS[$tone].color};
+  color: var(--color-surface);
+  outline: ${({ $selected }) =>
+    $selected ? '5px solid var(--color-accent-soft)' : '0 solid transparent'};
+  outline-offset: 2px;
   transform: translate(-50%, -50%);
-  border: 2px solid rgba(255, 255, 255, 0.92);
-  background:
-    ${({ $tone }) => {
-      switch ($tone) {
-        case 'green':
-          return 'linear-gradient(180deg, #39de92 0%, #1fa363 100%)';
-        case 'amber':
-          return 'linear-gradient(180deg, #ffc96f 0%, #e29a25 100%)';
-        case 'red':
-          return 'linear-gradient(180deg, #ff8792 0%, #ea495c 100%)';
-        default:
-          return 'linear-gradient(180deg, #6eafff 0%, #4c84f7 100%)';
-      }
-    }};
-  box-shadow:
-    ${({ $tone, $selected }) => {
-      const glow =
-        $tone === 'green'
-          ? 'rgba(47, 209, 132, 0.42)'
-          : $tone === 'amber'
-            ? 'rgba(255, 190, 87, 0.42)'
-            : 'rgba(255, 105, 119, 0.42)';
-
-      return $selected
-        ? `0 0 0 6px rgba(91, 156, 255, 0.18), 0 10px 20px ${glow}`
-        : `0 10px 18px ${glow}`;
-    }};
   transition:
     transform 160ms ease,
-    box-shadow 160ms ease;
+    background 160ms ease,
+    outline 160ms ease;
 
   &:hover {
     transform: translate(-50%, -50%) scale(1.06);
+  }
+
+  &:focus-visible {
+    outline: 5px solid var(--color-focus);
+    outline-offset: 3px;
   }
 `;
 
@@ -257,26 +278,26 @@ export const MarkerIcon = styled.span`
   height: 14px;
 
   &::before {
-    content: '';
     position: absolute;
-    left: 3px;
     top: 3px;
+    left: 3px;
     width: 6px;
     height: 9px;
     border-radius: 2px 2px 3px 3px;
-    background: #ffffff;
+    background: currentColor;
+    content: '';
   }
 
   &::after {
-    content: '';
     position: absolute;
-    left: 1px;
     top: 0;
+    left: 1px;
     width: 6px;
     height: 4px;
-    border-radius: 6px 6px 0 0;
-    border: 2px solid #ffffff;
+    border: 2px solid currentColor;
     border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    content: '';
     transform: rotate(-14deg);
     transform-origin: center;
   }
@@ -286,28 +307,31 @@ export const MarkerTooltip = styled.div<{ $visible: boolean }>`
   position: absolute;
   left: 50%;
   bottom: calc(100% + 10px);
-  transform: translateX(-50%);
   min-width: 126px;
   padding: 8px 10px;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  border: 1px solid rgba(132, 154, 199, 0.18);
-  background: rgba(8, 16, 31, 0.96);
-  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.28);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--color-shadow);
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: none;
+  transform: translateX(-50%);
   transition: opacity 140ms ease;
 `;
 
 export const MarkerTooltipTitle = styled.div`
+  color: var(--color-text-primary);
   font-size: 16px;
   font-weight: 700;
-  color: var(--text-strong);
+  line-height: 1.35;
 `;
 
 export const MarkerTooltipMeta = styled.div`
   margin-top: 4px;
+  color: var(--color-text-secondary);
   font-size: 15px;
-  color: #c7ecee;
+  line-height: 1.4;
 `;
 
 export const ZoneFooter = styled.div`
@@ -315,6 +339,7 @@ export const ZoneFooter = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  color: var(--color-text-secondary);
   font-size: 16px;
-  color: var(--text-secondary);
+  line-height: 1.4;
 `;

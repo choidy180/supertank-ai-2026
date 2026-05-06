@@ -67,42 +67,37 @@ const PageShell = styled.main`
   min-height: 100dvh;
   padding: 22px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 0% 0%, rgba(47, 93, 180, 0.16) 0%, rgba(47, 93, 180, 0) 28%),
-    radial-gradient(circle at 100% 0%, rgba(14, 36, 77, 0.28) 0%, rgba(14, 36, 77, 0) 34%),
-    linear-gradient(180deg, #07111f 0%, #040c17 48%, #020812 100%);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+
+  @media (max-width: 768px) {
+    padding: 18px;
+    overflow: visible;
+  }
 `;
 
 const Frame = styled.div`
   position: relative;
-  height: calc(100vh - 44px);
-  height: calc(100dvh - 44px);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 18px;
+  height: calc(100vh - 44px);
+  height: calc(100dvh - 44px);
   min-height: 0;
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
-    background-size: 28px 28px;
-    mask-image: radial-gradient(circle at center, black 22%, transparent 82%);
-    opacity: 0.12;
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: calc(100vh - 36px);
   }
 `;
 
 const DashboardGrid = styled.section`
   position: relative;
   z-index: 1;
-  min-height: 0;
   display: grid;
   grid-template-columns: 640px minmax(0, 1fr);
   gap: 18px;
+  min-height: 0;
   overflow: hidden;
 
   @media (max-width: 1320px) {
@@ -111,15 +106,20 @@ const DashboardGrid = styled.section`
 
   @media (max-width: 1120px) {
     grid-template-columns: 1fr;
+    overflow: visible;
   }
 `;
 
 const LeftColumn = styled.div`
-  min-height: 0;
   display: grid;
   grid-template-rows: auto auto;
   gap: 18px;
+  min-height: 0;
   overflow: hidden;
+
+  @media (max-width: 1120px) {
+    overflow: visible;
+  }
 `;
 
 export default EquipmentManagementDashboard;

@@ -2,6 +2,50 @@ import styled, { css } from 'styled-components';
 
 import { buttonReset, pulse } from '../shared/styles';
 
+type StatusTone = 'ok' | 'warning' | 'error';
+type MiniPillTone = StatusTone | 'neutral';
+type NodeStatus = StatusTone | 'idle';
+
+type ToneVars = {
+  color: string;
+  border: string;
+  background: string;
+};
+
+const TONE_VARS: Record<MiniPillTone, ToneVars> = {
+  ok: {
+    color: 'var(--color-success)',
+    border: 'var(--color-success)',
+    background: 'var(--color-success-soft)',
+  },
+  warning: {
+    color: 'var(--color-warning)',
+    border: 'var(--color-warning)',
+    background: 'var(--color-warning-soft)',
+  },
+  error: {
+    color: 'var(--color-error)',
+    border: 'var(--color-error)',
+    background: 'var(--color-error-soft)',
+  },
+  neutral: {
+    color: 'var(--color-text-secondary)',
+    border: 'var(--color-border)',
+    background: 'var(--color-surface-muted)',
+  },
+};
+
+const NODE_STATUS_VARS: Record<NodeStatus, ToneVars> = {
+  ok: TONE_VARS.ok,
+  warning: TONE_VARS.warning,
+  error: TONE_VARS.error,
+  idle: {
+    color: 'var(--color-text-tertiary)',
+    border: 'var(--color-border)',
+    background: 'var(--color-surface-muted)',
+  },
+};
+
 export const LineHeaderRow = styled.div`
   display: flex;
   align-items: center;
@@ -18,43 +62,20 @@ export const LineHeaderActions = styled.div`
 `;
 
 export const MiniPill = styled.div<{
-  $tone: 'ok' | 'warning' | 'error' | 'neutral';
+  $tone: MiniPillTone;
 }>`
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 34px;
   padding: 0 12px;
+  border: 1px solid ${({ $tone }) => TONE_VARS[$tone].border};
   border-radius: 999px;
-  border: 1px solid
-    ${({ $tone }) => {
-      switch ($tone) {
-        case 'ok':
-          return 'rgba(46, 209, 129, 0.24)';
-        case 'warning':
-          return 'rgba(255, 182, 72, 0.24)';
-        case 'error':
-          return 'rgba(255, 92, 108, 0.24)';
-        default:
-          return 'rgba(133, 154, 194, 0.18)';
-      }
-    }};
-  background:
-    ${({ $tone }) => {
-      switch ($tone) {
-        case 'ok':
-          return 'rgba(46, 209, 129, 0.1)';
-        case 'warning':
-          return 'rgba(255, 182, 72, 0.1)';
-        case 'error':
-          return 'rgba(255, 92, 108, 0.1)';
-        default:
-          return 'rgba(19, 34, 62, 0.82)';
-      }
-    }};
+  background: ${({ $tone }) => TONE_VARS[$tone].background};
+  color: ${({ $tone }) => TONE_VARS[$tone].color};
   font-size: 16px;
   font-weight: 700;
-  color: #eff4ff;
+  white-space: nowrap;
 `;
 
 export const LinesArea = styled.div`
@@ -63,6 +84,19 @@ export const LinesArea = styled.div`
   min-height: 0;
   overflow: auto;
   padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--color-border-strong);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 `;
 
 export const LineRow = styled.div<{ $selected: boolean }>`
@@ -71,40 +105,63 @@ export const LineRow = styled.div<{ $selected: boolean }>`
   align-items: center;
   gap: 18px;
   padding: 18px;
-  border-radius: 22px;
   border: 1px solid
     ${({ $selected }) =>
-      $selected ? 'rgba(74, 140, 255, 0.32)' : 'rgba(133, 154, 194, 0.12)'};
+      $selected ? 'var(--color-accent)' : 'var(--color-border)'};
+  border-radius: 22px;
   background: ${({ $selected }) =>
-    $selected ? 'rgba(18, 35, 67, 0.92)' : 'rgba(12, 22, 42, 0.74)'};
-  box-shadow: ${({ $selected }) =>
-    $selected ? '0 18px 38px rgba(0, 0, 0, 0.24)' : 'none'};
+    $selected ? 'var(--color-accent-soft)' : 'var(--color-surface-muted)'};
+  color: var(--color-text-primary);
   transition:
+    transform 160ms ease,
     border-color 160ms ease,
-    background 160ms ease,
-    transform 160ms ease;
+    background 160ms ease;
 
   &:hover {
     transform: translateY(-1px);
+    border-color: ${({ $selected }) =>
+      $selected ? 'var(--color-accent)' : 'var(--color-border-strong)'};
+    background: ${({ $selected }) =>
+      $selected ? 'var(--color-accent-soft)' : 'var(--color-surface-hover)'};
+  }
+
+  @media (max-width: 1180px) {
+    grid-template-columns: 96px minmax(0, 1fr) 144px;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    align-items: stretch;
   }
 `;
 
 export const LineLabelButton = styled.button`
   ${buttonReset};
+
   display: grid;
   gap: 6px;
+  min-width: 0;
   text-align: left;
+
+  &:focus-visible {
+    border-radius: 12px;
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
 `;
 
 export const LineName = styled.div`
+  color: var(--color-text-primary);
   font-size: 22px;
   font-weight: 800;
+  line-height: 1.2;
   letter-spacing: -0.03em;
 `;
 
 export const LineShift = styled.div`
+  color: var(--color-text-secondary);
   font-size: 16px;
-  color: #8ea0c7;
+  line-height: 1.4;
 `;
 
 export const NodeRail = styled.div`
@@ -112,6 +169,7 @@ export const NodeRail = styled.div`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0;
+  min-width: 0;
 `;
 
 export const NodeTrack = styled.div`
@@ -121,11 +179,7 @@ export const NodeTrack = styled.div`
   right: 9%;
   height: 4px;
   border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    rgba(95, 123, 175, 0.22) 0%,
-    rgba(95, 123, 175, 0.4) 100%
-  );
+  background: var(--color-border);
 `;
 
 export const NodeSlot = styled.div`
@@ -134,116 +188,84 @@ export const NodeSlot = styled.div`
   display: grid;
   justify-items: center;
   gap: 10px;
+  min-width: 0;
 `;
 
 export const NodeButton = styled.button<{
-  $status: 'ok' | 'warning' | 'error' | 'idle';
+  $status: NodeStatus;
   $selected: boolean;
 }>`
   ${buttonReset};
+
   display: flex;
   align-items: center;
   justify-content: center;
   width: 52px;
   height: 52px;
+  border: 2px solid ${({ $status }) => NODE_STATUS_VARS[$status].border};
   border-radius: 999px;
-  border: 2px solid
-    ${({ $status }) => {
-      switch ($status) {
-        case 'ok':
-          return 'rgba(46, 209, 129, 0.5)';
-        case 'warning':
-          return 'rgba(255, 182, 72, 0.5)';
-        case 'error':
-          return 'rgba(255, 92, 108, 0.56)';
-        case 'idle':
-          return 'rgba(133, 154, 194, 0.22)';
-        default:
-          return 'rgba(133, 154, 194, 0.22)';
-      }
-    }};
-  background:
-    ${({ $status }) => {
-      switch ($status) {
-        case 'ok':
-          return 'linear-gradient(180deg, rgba(46, 209, 129, 0.24) 0%, rgba(24, 90, 61, 0.62) 100%)';
-        case 'warning':
-          return 'linear-gradient(180deg, rgba(255, 182, 72, 0.24) 0%, rgba(117, 76, 21, 0.62) 100%)';
-        case 'error':
-          return 'linear-gradient(180deg, rgba(255, 92, 108, 0.24) 0%, rgba(126, 34, 47, 0.68) 100%)';
-        case 'idle':
-          return 'linear-gradient(180deg, rgba(133, 154, 194, 0.12) 0%, rgba(32, 47, 75, 0.72) 100%)';
-        default:
-          return 'linear-gradient(180deg, rgba(133, 154, 194, 0.12) 0%, rgba(32, 47, 75, 0.72) 100%)';
-      }
-    }};
+  outline: ${({ $selected }) =>
+    $selected ? '5px solid var(--color-accent-soft)' : '0 solid transparent'};
+  outline-offset: 2px;
+  background: ${({ $status }) => NODE_STATUS_VARS[$status].background};
+  color: ${({ $status }) => NODE_STATUS_VARS[$status].color};
   font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  box-shadow: ${({ $selected }) =>
-    $selected ? '0 0 0 6px rgba(74, 140, 255, 0.16)' : 'none'};
+  font-weight: 700;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    outline 160ms ease;
+
   ${({ $selected }) =>
     $selected
       ? css`
           animation: ${pulse} 2.1s infinite;
         `
-      : 'animation: none;'}
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease;
+      : css`
+          animation: none;
+        `}
 
   &:hover {
     transform: translateY(-2px);
   }
+
+  &:focus-visible {
+    outline: 5px solid var(--color-focus);
+    outline-offset: 3px;
+  }
 `;
 
 export const NodeLabel = styled.div<{ $selected: boolean }>`
+  color: ${({ $selected }) =>
+    $selected ? 'var(--color-text-primary)' : 'var(--color-text-secondary)'};
   font-size: 16px;
   font-weight: ${({ $selected }) => ($selected ? 700 : 600)};
-  color: ${({ $selected }) => ($selected ? '#eef4ff' : '#ffffff')};
-  text-align: center;
   line-height: 1.4;
+  text-align: center;
 `;
 
 export const LineSummary = styled.div`
   display: grid;
   gap: 8px;
   justify-items: end;
+
+  @media (max-width: 768px) {
+    justify-items: start;
+  }
 `;
 
-export const SummaryPill = styled.div<{ $tone: 'ok' | 'warning' | 'error' }>`
+export const SummaryPill = styled.div<{ $tone: StatusTone }>`
   display: inline-flex;
   align-items: center;
   min-height: 28px;
   padding: 0 10px;
+  border: 1px solid ${({ $tone }) => TONE_VARS[$tone].border};
   border-radius: 999px;
-  border: 1px solid
-    ${({ $tone }) => {
-      switch ($tone) {
-        case 'ok':
-          return 'rgba(46, 209, 129, 0.24)';
-        case 'warning':
-          return 'rgba(255, 182, 72, 0.24)';
-        case 'error':
-          return 'rgba(255, 92, 108, 0.24)';
-        default:
-          return 'rgba(133, 154, 194, 0.18)';
-      }
-    }};
-  background:
-    ${({ $tone }) => {
-      switch ($tone) {
-        case 'ok':
-          return 'rgba(46, 209, 129, 0.1)';
-        case 'warning':
-          return 'rgba(255, 182, 72, 0.1)';
-        case 'error':
-          return 'rgba(255, 92, 108, 0.1)';
-        default:
-          return 'rgba(133, 154, 194, 0.1)';
-      }
-    }};
+  background: ${({ $tone }) => TONE_VARS[$tone].background};
+  color: ${({ $tone }) => TONE_VARS[$tone].color};
   font-size: 14px;
   font-weight: 700;
-  color: #eff3ff;
+  white-space: nowrap;
 `;

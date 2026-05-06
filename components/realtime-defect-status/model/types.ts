@@ -5,7 +5,7 @@ export type HistoryTone = 'incident' | 'processing' | 'done';
 export interface SummaryCard {
   id: string;
   label: string;
-  value: number;
+  value: string;
   caption: string;
   icon: string;
   tone: SummaryTone;
