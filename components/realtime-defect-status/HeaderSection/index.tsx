@@ -4,6 +4,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { formatClock } from '../model/helpers';
 import type { SummaryCard } from '../model/types';
 import { useState, useEffect } from 'react';
+import GlobalDateFilter from '@/components/common/GlobalDateFilter';
 
 // ✨ isDark 프롭스 추가
 interface HeaderSectionProps {
@@ -42,6 +43,7 @@ const HeaderSection = ({ summaryCards, now, isDark }: HeaderSectionProps) => {
       </TitleBlock>
 
       <MetaRow>
+        <GlobalDateFilter />
         <MetaPill $tone="blue" $isDark={isDark}>
           <DotIndicator />
           {/* 마운트 전(서버)에는 고정 텍스트를 보여주고, 마운트 후(클라이언트)에만 실시간 시간을 표시 */}

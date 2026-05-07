@@ -1,5 +1,4 @@
 "use client";
-
 import Sidebar from "@/components/Sidebar";
 import StyledComponentsRegistry from "@/lib/registry";
 import { createGlobalStyle } from "styled-components";

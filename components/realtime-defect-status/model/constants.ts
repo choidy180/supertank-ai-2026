@@ -9,7 +9,7 @@ export const SUMMARY_CARDS: SummaryCard[] = [
   {
     id: 'incident',
     label: '금일 발생',
-    value: 12,
+    value: '12',
     caption: '실시간 감지된 신규 불량',
     icon: '↗',
     tone: 'incident'
@@ -17,7 +17,7 @@ export const SUMMARY_CARDS: SummaryCard[] = [
   {
     id: 'processing',
     label: '처리 중',
-    value: 8,
+    value: '8',
     caption: '현장 확인 및 조치 진행',
     icon: '⚙',
     tone: 'processing'
@@ -25,7 +25,7 @@ export const SUMMARY_CARDS: SummaryCard[] = [
   {
     id: 'done',
     label: '완료',
-    value: 105,
+    value: '105',
     caption: '정상 범위 복귀 및 종료',
     icon: '✓',
     tone: 'done'
