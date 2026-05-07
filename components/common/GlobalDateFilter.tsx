@@ -406,7 +406,7 @@ const buttonReset = css`
 `;
 
 const DateFilterWrap = styled.div`
-  width: 500px;
+  width: 384px;
   max-width: 100%;
 
   @media (max-width: 640px) {
@@ -419,13 +419,13 @@ const DateFilterCard = styled.button`
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   /* gap: 18px; */
   width: 100%;
-  min-height: 72px;
-  padding: 0 18px;
+  min-height: 42px;
+  padding: 0 10px;
   border: 1px solid var(--date-filter-border);
-  border-radius: 20px;
+  border-radius: 14px;
   background: var(--date-filter-surface);
   color: var(--date-filter-text-primary);
   box-shadow: var(--date-filter-shadow);
@@ -456,8 +456,8 @@ const CardLeft = styled.div`
 
 const CalendarIcon = styled.span`
   position: relative;
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
   flex: 0 0 auto;
   border: 1px solid var(--date-filter-border);
   border-radius: 12px;
@@ -469,7 +469,7 @@ const CalendarIcon = styled.span`
     right: 8px;
     left: 8px;
     height: 3px;
-    border-radius: 999px;
+    border-radius: 8px;
     background: var(--date-filter-accent);
     content: '';
   }
@@ -498,14 +498,14 @@ const CardTextGroup = styled.div`
 
 const CardLabel = styled.span`
   color: var(--date-filter-text-secondary);
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1;
 `;
 
 const CardRange = styled.span`
   color: var(--date-filter-text-primary);
-  font-size: 25px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -527,8 +527,9 @@ const CardBadge = styled.span`
   border-radius: 999px;
   background: var(--date-filter-surface-muted);
   color: var(--date-filter-text-secondary);
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 600;
+  margin-left: 14px;
 `;
 
 const ModalOverlay = styled.div`
@@ -583,8 +584,8 @@ const ModalEyebrow = styled.div`
 const ModalTitle = styled.h2`
   margin: 0;
   color: var(--date-filter-text-primary);
-  font-size: 34px;
-  font-weight: 900;
+  font-size: 30px;
+  font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.04em;
 `;
