@@ -2,7 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Bot, RefreshCw, Sparkles, X } from 'lucide-react';
+import {
+  ChevronDown,
+  MessageCircle,
+  RefreshCw,
+  Sparkles,
+  X,
+} from 'lucide-react';
 import styled, { css, keyframes } from 'styled-components';
 
 import ChatbotPanel from '@/components/ChatbotPanel';
@@ -55,11 +61,13 @@ type NetworkErrorState = {
   detail?: string;
 };
 
-type FloatingChatbotThemeStyle = {
-  surface: string;
-  surfaceElevated: string;
-  surfaceMuted: string;
-  surfaceHover: string;
+type FloatingThemeStyle = {
+  colorScheme: 'light' | 'dark';
+  panel: string;
+  panelSolid: string;
+  elevated: string;
+  muted: string;
+  hover: string;
   border: string;
   borderStrong: string;
   textPrimary: string;
@@ -67,7 +75,8 @@ type FloatingChatbotThemeStyle = {
   textTertiary: string;
   accent: string;
   accentSoft: string;
-  onAccent: string;
+  launcherBg: string;
+  launcherText: string;
   danger: string;
   dangerSoft: string;
   success: string;
@@ -76,95 +85,78 @@ type FloatingChatbotThemeStyle = {
   focus: string;
 };
 
-const FLOATING_CHATBOT_THEME: Record<'light' | 'dark', FloatingChatbotThemeStyle> = {
+const FLOATING_THEME: Record<'light' | 'dark', FloatingThemeStyle> = {
   light: {
-    surface: '#ffffff',
-    surfaceElevated: 'rgba(255, 255, 255, 0.88)',
-    surfaceMuted: '#f8fafc',
-    surfaceHover: '#f1f5f9',
-    border: '#e5e7eb',
-    borderStrong: '#cbd5e1',
+    colorScheme: 'light',
+    panel: 'rgba(255, 255, 255, 0.78)',
+    panelSolid: '#ffffff',
+    elevated: 'rgba(255, 255, 255, 0.94)',
+    muted: 'rgba(246, 247, 251, 0.92)',
+    hover: 'rgba(235, 239, 246, 0.96)',
+    border: 'rgba(17, 24, 39, 0.1)',
+    borderStrong: 'rgba(17, 24, 39, 0.18)',
     textPrimary: '#111827',
     textSecondary: '#64748b',
-    textTertiary: '#94a3b8',
-    accent: '#2563eb',
-    accentSoft: 'rgba(37, 99, 235, 0.08)',
-    onAccent: '#ffffff',
+    textTertiary: '#9ca3af',
+    accent: '#0a84ff',
+    accentSoft: 'rgba(10, 132, 255, 0.1)',
+    launcherBg: 'rgba(255, 255, 255, 0.9)',
+    launcherText: '#111827',
     danger: '#dc2626',
     dangerSoft: 'rgba(220, 38, 38, 0.08)',
-    success: '#059669',
-    shadow: '0 18px 54px rgba(15, 23, 42, 0.16)',
-    shadowStrong: '0 26px 80px rgba(15, 23, 42, 0.24)',
-    focus: 'rgba(37, 99, 235, 0.18)',
+    success: '#16a34a',
+    shadow: '0 16px 38px rgba(15, 23, 42, 0.14)',
+    shadowStrong: '0 28px 80px rgba(15, 23, 42, 0.22)',
+    focus: 'rgba(10, 132, 255, 0.22)',
   },
   dark: {
-    surface: '#111827',
-    surfaceElevated: 'rgba(17, 24, 39, 0.88)',
-    surfaceMuted: '#1f2937',
-    surfaceHover: '#273449',
-    border: 'rgba(148, 163, 184, 0.22)',
-    borderStrong: 'rgba(148, 163, 184, 0.38)',
+    colorScheme: 'dark',
+    panel: 'rgba(15, 23, 42, 0.78)',
+    panelSolid: '#0f172a',
+    elevated: 'rgba(30, 41, 59, 0.9)',
+    muted: 'rgba(30, 41, 59, 0.72)',
+    hover: 'rgba(51, 65, 85, 0.72)',
+    border: 'rgba(226, 232, 240, 0.12)',
+    borderStrong: 'rgba(226, 232, 240, 0.24)',
     textPrimary: '#f8fafc',
     textSecondary: '#cbd5e1',
     textTertiary: '#94a3b8',
-    accent: '#93c5fd',
-    accentSoft: 'rgba(147, 197, 253, 0.12)',
-    onAccent: '#0f172a',
+    accent: '#7dd3fc',
+    accentSoft: 'rgba(125, 211, 252, 0.12)',
+    launcherBg: 'rgba(15, 23, 42, 0.86)',
+    launcherText: '#f8fafc',
     danger: '#fca5a5',
     dangerSoft: 'rgba(252, 165, 165, 0.1)',
     success: '#86efac',
-    shadow: '0 18px 54px rgba(0, 0, 0, 0.34)',
-    shadowStrong: '0 26px 80px rgba(0, 0, 0, 0.46)',
-    focus: 'rgba(147, 197, 253, 0.24)',
+    shadow: '0 16px 44px rgba(0, 0, 0, 0.34)',
+    shadowStrong: '0 30px 86px rgba(0, 0, 0, 0.5)',
+    focus: 'rgba(125, 211, 252, 0.26)',
   },
 };
 
-const createFloatingChatbotThemeVars = (theme: FloatingChatbotThemeStyle) => css`
-  --floating-chatbot-surface: ${theme.surface};
-  --floating-chatbot-surface-elevated: ${theme.surfaceElevated};
-  --floating-chatbot-surface-muted: ${theme.surfaceMuted};
-  --floating-chatbot-surface-hover: ${theme.surfaceHover};
-  --floating-chatbot-border: ${theme.border};
-  --floating-chatbot-border-strong: ${theme.borderStrong};
-  --floating-chatbot-text-primary: ${theme.textPrimary};
-  --floating-chatbot-text-secondary: ${theme.textSecondary};
-  --floating-chatbot-text-tertiary: ${theme.textTertiary};
-  --floating-chatbot-accent: ${theme.accent};
-  --floating-chatbot-accent-soft: ${theme.accentSoft};
-  --floating-chatbot-on-accent: ${theme.onAccent};
-  --floating-chatbot-danger: ${theme.danger};
-  --floating-chatbot-danger-soft: ${theme.dangerSoft};
-  --floating-chatbot-success: ${theme.success};
-  --floating-chatbot-shadow: ${theme.shadow};
-  --floating-chatbot-shadow-strong: ${theme.shadowStrong};
-  --floating-chatbot-focus: ${theme.focus};
+const createFloatingThemeVars = (theme: FloatingThemeStyle) => css`
+  color-scheme: ${theme.colorScheme};
 
-  --bg: ${theme.surfaceMuted};
-  --card: ${theme.surface};
-  --text: ${theme.textPrimary};
-  --muted: ${theme.textSecondary};
-  --border: ${theme.border};
-  --primary: ${theme.accent};
-  --danger: ${theme.danger};
-  --accent: ${theme.accent};
-  --shadow: ${theme.shadow};
-
-  --color-background: ${theme.surfaceMuted};
-  --color-surface: ${theme.surface};
-  --color-surface-muted: ${theme.surfaceMuted};
-  --color-surface-hover: ${theme.surfaceHover};
-  --color-border: ${theme.border};
-  --color-border-strong: ${theme.borderStrong};
-  --color-text-primary: ${theme.textPrimary};
-  --color-text-secondary: ${theme.textSecondary};
-  --color-text-tertiary: ${theme.textTertiary};
-  --color-accent: ${theme.accent};
-  --color-accent-soft: ${theme.accentSoft};
-  --color-on-accent: ${theme.onAccent};
-  --color-error: ${theme.danger};
-  --color-error-soft: ${theme.dangerSoft};
-  --color-shadow: ${theme.shadow};
-  --color-focus: ${theme.focus};
+  --floating-panel: ${theme.panel};
+  --floating-panel-solid: ${theme.panelSolid};
+  --floating-elevated: ${theme.elevated};
+  --floating-muted: ${theme.muted};
+  --floating-hover: ${theme.hover};
+  --floating-border: ${theme.border};
+  --floating-border-strong: ${theme.borderStrong};
+  --floating-text-primary: ${theme.textPrimary};
+  --floating-text-secondary: ${theme.textSecondary};
+  --floating-text-tertiary: ${theme.textTertiary};
+  --floating-accent: ${theme.accent};
+  --floating-accent-soft: ${theme.accentSoft};
+  --floating-launcher-bg: ${theme.launcherBg};
+  --floating-launcher-text: ${theme.launcherText};
+  --floating-danger: ${theme.danger};
+  --floating-danger-soft: ${theme.dangerSoft};
+  --floating-success: ${theme.success};
+  --floating-shadow: ${theme.shadow};
+  --floating-shadow-strong: ${theme.shadowStrong};
+  --floating-focus: ${theme.focus};
 `;
 
 const buildImageNameUrl = (imgPath: string) =>
@@ -183,6 +175,26 @@ const buildTextUrl = (logName: string) =>
 
 const buildVideoUrl = (videoName: string) =>
   `${API_BASE}/api/videos/${encodeURIComponent(videoName)}`;
+
+const stringifyValue = (value: unknown) => {
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  if (typeof value === 'string') {
+    return value.trim();
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value).trim();
+  }
+
+  return '';
+};
 
 const normalizeDateTime = (value: unknown) => {
   const raw = stringifyValue(value);
@@ -210,26 +222,6 @@ const normalizeDateTime = (value: unknown) => {
   }
 
   return normalized;
-};
-
-const stringifyValue = (value: unknown) => {
-  if (value === null || value === undefined) {
-    return '';
-  }
-
-  if (value instanceof Date) {
-    return value.toISOString();
-  }
-
-  if (typeof value === 'string') {
-    return value.trim();
-  }
-
-  if (typeof value === 'number' || typeof value === 'boolean') {
-    return String(value).trim();
-  }
-
-  return '';
 };
 
 const isTimeOverOneMinute = (logTimeStr: string): boolean => {
@@ -289,18 +281,6 @@ const fetchJsonWithTimeout = async <T,>(
     window.clearTimeout(timerId);
   }
 };
-
-const buttonReset = css`
-  appearance: none;
-  border: 0;
-  outline: none;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-`;
 
 export default function FloatingChatbotAssistant() {
   const isDark = useThemeStore((state) => state.isDark);
@@ -630,19 +610,6 @@ export default function FloatingChatbotAssistant() {
     };
   }, [isOpen, retryKey]);
 
-  const handleOpen = () => {
-    setIsOpen(true);
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
-  const handleDismissNetworkError = () => {
-    networkDismissedRef.current = true;
-    setNetworkError(null);
-  };
-
   const handleRefresh = () => {
     networkDismissedRef.current = false;
     setNetworkError(null);
@@ -650,263 +617,372 @@ export default function FloatingChatbotAssistant() {
     setRetryKey((prev) => prev + 1);
   };
 
+  const handleDismissNetworkError = () => {
+    networkDismissedRef.current = true;
+    setNetworkError(null);
+  };
+
   return (
     <FloatingRoot $isDark={isDark}>
       {isOpen && (
-        <ChatbotDrawer
+        <FloatingPanel
           role="dialog"
           aria-modal="false"
           aria-labelledby="floating-chatbot-title"
         >
-          <DrawerHeader>
-            <HeaderTitleGroup>
-              <HeaderEyebrow>
-                <Sparkles size={13} />
-                Smart Assistant
-              </HeaderEyebrow>
-              <HeaderTitle id="floating-chatbot-title">
-                AI 챗봇 어시스턴트
-              </HeaderTitle>
-              <HeaderCaption>
-                {isLoading
-                  ? '조치 로그를 불러오는 중입니다.'
-                  : `연동 로그 ${allLogs.length}건 · 영상 준비 ${readyVideoCount}건`}
-              </HeaderCaption>
-            </HeaderTitleGroup>
+          <PanelChrome>
+            <PanelIdentity>
+              <PanelOrb aria-hidden="true">
+                <Sparkles size={18} />
+              </PanelOrb>
 
-            <HeaderActions>
-              <IconButton
+              <PanelTitleGroup>
+                <PanelEyebrow>Smart Factory Copilot</PanelEyebrow>
+                <PanelTitle id="floating-chatbot-title">AI 조치 어시스턴트</PanelTitle>
+                <PanelCaption>
+                  {isLoading
+                    ? '로그 데이터를 동기화하고 있습니다.'
+                    : `로그 ${allLogs.length}건 · 영상 준비 ${readyVideoCount}건`}
+                </PanelCaption>
+              </PanelTitleGroup>
+            </PanelIdentity>
+
+            <PanelActions>
+              <ChromeButton
                 type="button"
                 aria-label="챗봇 데이터 새로고침"
                 onClick={handleRefresh}
               >
-                <RefreshCw size={18} className={isLoading ? 'spinner' : undefined} />
-              </IconButton>
+                <RefreshCw size={17} className={isLoading ? 'spinner' : undefined} />
+              </ChromeButton>
 
-              <IconButton
+              <ChromeButton
                 type="button"
                 aria-label="AI 챗봇 닫기"
-                onClick={handleClose}
+                onClick={() => setIsOpen(false)}
               >
-                <X size={20} />
-              </IconButton>
-            </HeaderActions>
-          </DrawerHeader>
+                <X size={18} />
+              </ChromeButton>
+            </PanelActions>
+          </PanelChrome>
 
           {networkError && (
-            <NetworkBanner>
+            <NetworkNotice>
               <span>
-                로그 서버와 연결이 원활하지 않습니다.
+                로그 서버 연결이 원활하지 않습니다.
                 {networkError.detail ? ` ${networkError.detail}` : ''}
               </span>
               <button type="button" onClick={handleDismissNetworkError}>
-                닫기
+                숨기기
               </button>
-            </NetworkBanner>
+            </NetworkNotice>
           )}
 
-          <ChatbotViewport>
-            <ChatbotPanel logs={allLogs} />
-          </ChatbotViewport>
-        </ChatbotDrawer>
+          <PanelBody>
+            <ChatbotPanel logs={allLogs} height="100%" showHeader={false} />
+          </PanelBody>
+        </FloatingPanel>
       )}
 
-      <FloatingButton
+      <Launcher
         type="button"
-        aria-label={isOpen ? 'AI 챗봇 어시스턴트 닫기' : 'AI 챗봇 어시스턴트 열기'}
+        aria-label={isOpen ? 'AI 조치 어시스턴트 닫기' : 'AI 조치 어시스턴트 열기'}
         aria-expanded={isOpen}
-        onClick={() => {
-          if (isOpen) {
-            handleClose();
-            return;
-          }
-
-          handleOpen();
-        }}
+        onClick={() => setIsOpen((prev) => !prev)}
       >
-        {isOpen ? <X size={24} /> : <Bot size={24} />}
-        <span>{isOpen ? '닫기' : 'AI'}</span>
-      </FloatingButton>
+        <LauncherIcon>
+          {isOpen ? <ChevronDown size={22} /> : <MessageCircle size={22} />}
+        </LauncherIcon>
+
+        <LauncherText>
+          <strong>{isOpen ? '접기' : 'AI Assist'}</strong>
+          <span>{isOpen ? '열린 상태' : '조치 이력 요약'}</span>
+        </LauncherText>
+
+        {!isOpen && <LauncherPulse aria-hidden="true" />}
+      </Launcher>
     </FloatingRoot>
   );
 }
 
+const buttonReset = css`
+  appearance: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+`;
+
 const spin = keyframes`
-  100% {
+  to {
     transform: rotate(360deg);
   }
 `;
 
-const slideUp = keyframes`
+const floatIn = keyframes`
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.98);
+    transform: translate3d(0, 14px, 0) scale(0.98);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+`;
+
+const pulse = keyframes`
+  0% {
+    transform: scale(0.7);
+    opacity: 0.42;
+  }
+
+  70% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
   }
 `;
 
 const FloatingRoot = styled.div<{ $isDark: boolean }>`
   ${({ $isDark }) =>
-    createFloatingChatbotThemeVars(
-      $isDark ? FLOATING_CHATBOT_THEME.dark : FLOATING_CHATBOT_THEME.light,
-    )}
+    createFloatingThemeVars($isDark ? FLOATING_THEME.dark : FLOATING_THEME.light)}
 
   position: relative;
-  z-index: 1800;
+  z-index: 1900;
   font-family:
     'Pretendard Variable',
     'Pretendard',
     -apple-system,
     BlinkMacSystemFont,
+    'SF Pro Display',
     'Apple SD Gothic Neo',
     'Noto Sans KR',
     sans-serif;
 `;
 
-const FloatingButton = styled.button`
+const Launcher = styled.button`
   ${buttonReset};
 
   position: fixed;
   right: 26px;
   bottom: 26px;
-  z-index: 1810;
+  z-index: 1910;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 9px;
-  min-width: 72px;
-  height: 56px;
-  padding: 0 18px;
-  border: 1px solid var(--floating-chatbot-border);
+  gap: 11px;
+  min-width: 172px;
+  height: 64px;
+  padding: 8px 17px 8px 9px;
+  border: 1px solid var(--floating-border);
   border-radius: 999px;
-  background: var(--floating-chatbot-accent);
-  color: var(--floating-chatbot-on-accent);
-  box-shadow: var(--floating-chatbot-shadow);
-  font-size: 15px;
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent),
+    var(--floating-launcher-bg);
+  color: var(--floating-launcher-text);
+  box-shadow: var(--floating-shadow);
+  backdrop-filter: blur(22px) saturate(1.15);
   transition:
-    transform 160ms ease,
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 160ms ease,
     box-shadow 160ms ease,
-    opacity 160ms ease;
+    background 160ms ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--floating-chatbot-shadow-strong);
+    transform: translateY(-3px);
+    border-color: var(--floating-border-strong);
+    box-shadow: var(--floating-shadow-strong);
   }
 
   &:focus-visible {
-    outline: 4px solid var(--floating-chatbot-focus);
-    outline-offset: 3px;
+    outline: 4px solid var(--floating-focus);
+    outline-offset: 4px;
   }
 
   @media (max-width: 640px) {
     right: 18px;
     bottom: 18px;
-    min-width: 62px;
-    height: 52px;
-    padding: 0 16px;
+    min-width: 64px;
+    width: 64px;
+    height: 64px;
+    padding: 8px;
   }
 `;
 
-const ChatbotDrawer = styled.aside`
+const LauncherIcon = styled.span`
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--floating-accent-soft);
+  color: var(--floating-accent);
+`;
+
+const LauncherText = styled.span`
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  text-align: left;
+
+  strong {
+    color: var(--floating-text-primary);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    white-space: nowrap;
+  }
+
+  span {
+    color: var(--floating-text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+`;
+
+const LauncherPulse = styled.span`
+  position: absolute;
+  top: 9px;
+  right: 12px;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--floating-accent);
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: ${pulse} 1.8s ease-out infinite;
+    content: '';
+  }
+`;
+
+const FloatingPanel = styled.aside`
   position: fixed;
   right: 24px;
-  bottom: 94px;
-  z-index: 1805;
+  bottom: 100px;
+  z-index: 1905;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
-  width: min(460px, calc(100vw - 32px));
-  height: min(760px, calc(100dvh - 122px));
+  width: min(482px, calc(100vw - 32px));
+  height: min(760px, calc(100dvh - 126px));
   min-height: 420px;
   overflow: hidden;
-  border: 1px solid var(--floating-chatbot-border);
-  border-radius: 28px;
-  background: var(--floating-chatbot-surface-elevated);
-  color: var(--floating-chatbot-text-primary);
-  box-shadow: var(--floating-chatbot-shadow-strong);
-  backdrop-filter: blur(22px) saturate(1.12);
-  animation: ${slideUp} 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  border: 1px solid var(--floating-border);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 10% 0%, var(--floating-accent-soft), transparent 34%),
+    var(--floating-panel);
+  color: var(--floating-text-primary);
+  box-shadow: var(--floating-shadow-strong);
+  backdrop-filter: blur(26px) saturate(1.18);
+  animation: ${floatIn} 240ms cubic-bezier(0.22, 1, 0.36, 1);
 
   @media (max-width: 640px) {
     right: 10px;
-    bottom: 82px;
+    bottom: 92px;
     width: calc(100vw - 20px);
-    height: calc(100dvh - 104px);
+    height: calc(100dvh - 112px);
     min-height: 0;
-    border-radius: 24px;
+    border-radius: 28px;
   }
 `;
 
-const DrawerHeader = styled.header`
+const PanelChrome = styled.header`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
   min-width: 0;
-  padding: 18px 18px 16px;
-  border-bottom: 1px solid var(--floating-chatbot-border);
-  background:
-    radial-gradient(circle at 0% 0%, var(--floating-chatbot-accent-soft), transparent 46%),
-    var(--floating-chatbot-surface-elevated);
+  padding: 18px 18px 15px;
+  border-bottom: 1px solid var(--floating-border);
 `;
 
-const HeaderTitleGroup = styled.div`
-  display: grid;
-  gap: 4px;
+const PanelIdentity = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   min-width: 0;
 `;
 
-const HeaderEyebrow = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  width: fit-content;
-  color: var(--floating-chatbot-accent);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
+const PanelOrb = styled.div`
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border: 1px solid var(--floating-border);
+  border-radius: 16px;
+  background: var(--floating-elevated);
+  color: var(--floating-accent);
+`;
+
+const PanelTitleGroup = styled.div`
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+`;
+
+const PanelEyebrow = styled.div`
+  color: var(--floating-accent);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
   text-transform: uppercase;
 `;
 
-const HeaderTitle = styled.h2`
+const PanelTitle = styled.h2`
   margin: 0;
-  color: var(--floating-chatbot-text-primary);
-  font-size: 21px;
-  font-weight: 900;
-  line-height: 1.22;
-  letter-spacing: -0.045em;
-`;
-
-const HeaderCaption = styled.div`
-  color: var(--floating-chatbot-text-secondary);
-  font-size: 12px;
+  color: var(--floating-text-primary);
+  font-size: 20px;
   font-weight: 700;
-  line-height: 1.45;
+  letter-spacing: -0.045em;
+  line-height: 1;
 `;
 
-const HeaderActions = styled.div`
+const PanelCaption = styled.div`
+  color: var(--floating-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+`;
+
+const PanelActions = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   flex: 0 0 auto;
 `;
 
-const IconButton = styled.button`
+const ChromeButton = styled.button`
   ${buttonReset};
 
   display: grid;
   place-items: center;
   width: 38px;
   height: 38px;
-  border: 1px solid var(--floating-chatbot-border);
+  border: 1px solid var(--floating-border);
   border-radius: 999px;
-  background: var(--floating-chatbot-surface-muted);
-  color: var(--floating-chatbot-text-secondary);
+  background: var(--floating-elevated);
+  color: var(--floating-text-secondary);
   transition:
     transform 160ms ease,
     border-color 160ms ease,
@@ -915,13 +991,13 @@ const IconButton = styled.button`
 
   &:hover {
     transform: translateY(-1px);
-    border-color: var(--floating-chatbot-border-strong);
-    background: var(--floating-chatbot-surface-hover);
-    color: var(--floating-chatbot-text-primary);
+    border-color: var(--floating-border-strong);
+    background: var(--floating-hover);
+    color: var(--floating-text-primary);
   }
 
   &:focus-visible {
-    outline: 3px solid var(--floating-chatbot-focus);
+    outline: 3px solid var(--floating-focus);
     outline-offset: 2px;
   }
 
@@ -930,15 +1006,15 @@ const IconButton = styled.button`
   }
 `;
 
-const NetworkBanner = styled.div`
+const NetworkNotice = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--floating-chatbot-border);
-  background: var(--floating-chatbot-danger-soft);
-  color: var(--floating-chatbot-danger);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--floating-border);
+  background: var(--floating-danger-soft);
+  color: var(--floating-danger);
   font-size: 12px;
   font-weight: 800;
   line-height: 1.45;
@@ -953,22 +1029,22 @@ const NetworkBanner = styled.div`
     flex: 0 0 auto;
     color: inherit;
     font-size: 12px;
-    font-weight: 900;
+    font-weight: 950;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 `;
 
-const ChatbotViewport = styled.div`
+const PanelBody = styled.div`
+  grid-row: 3;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: var(--floating-chatbot-surface);
+  /* padding: 12px; */
 
   > * {
     width: 100%;
     height: 100%;
-    max-height: 100%;
     min-height: 0;
   }
 `;

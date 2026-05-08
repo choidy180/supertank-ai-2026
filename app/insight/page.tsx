@@ -1,7 +1,6 @@
-'use client';
+"use client";
 
-import { createElement, useEffect, useMemo, useRef, useState } from 'react';
-import type { KeyboardEvent } from 'react';
+import { createElement, useEffect, useMemo, useState } from "react";
 
 import {
   ArcElement,
@@ -14,24 +13,25 @@ import {
   PointElement,
   Title,
   Tooltip,
-} from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { IoAlertCircle } from 'react-icons/io5';
-import { MdRefresh, MdSend } from 'react-icons/md';
-import { RiRobot2Fill } from 'react-icons/ri';
-import { Bar, Doughnut } from 'react-chartjs-2';
-import styled, { createGlobalStyle, css } from 'styled-components';
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { IoAlertCircle } from "react-icons/io5";
+import { MdRefresh } from "react-icons/md";
+import { Bar, Doughnut } from "react-chartjs-2";
+import styled, { createGlobalStyle, css, keyframes } from "styled-components";
 
-import { useThemeStore } from '@/store/useThemeStore';
+import { useThemeStore } from "@/store/useThemeStore";
 
-type ThemeMode = 'light' | 'dark';
+type ThemeMode = "light" | "dark";
 
 type InsightThemeStyle = {
   colorScheme: ThemeMode;
   background: string;
+  backgroundGlow: string;
   surface: string;
   surfaceMuted: string;
   surfaceHover: string;
+  surfaceGlass: string;
   border: string;
   borderStrong: string;
   textPrimary: string;
@@ -39,6 +39,7 @@ type InsightThemeStyle = {
   textTertiary: string;
   accent: string;
   accentSoft: string;
+  onAccent: string;
   success: string;
   successSoft: string;
   warning: string;
@@ -46,6 +47,7 @@ type InsightThemeStyle = {
   error: string;
   errorSoft: string;
   shadow: string;
+  shadowHover: string;
   focus: string;
   chartGrid: string;
   chartPalette: string[];
@@ -55,56 +57,66 @@ type InsightThemeStyle = {
 
 const INSIGHT_THEME_STYLES: Record<ThemeMode, InsightThemeStyle> = {
   light: {
-    colorScheme: 'light',
-    background: '#f5f7fb',
-    surface: '#ffffff',
-    surfaceMuted: '#f8fafc',
-    surfaceHover: '#f1f5f9',
-    border: '#e5e7eb',
-    borderStrong: '#cbd5e1',
-    textPrimary: '#111827',
-    textSecondary: '#64748b',
-    textTertiary: '#94a3b8',
-    accent: '#2563eb',
-    accentSoft: 'rgba(37, 99, 235, 0.08)',
-    success: '#059669',
-    successSoft: 'rgba(5, 150, 105, 0.08)',
-    warning: '#d97706',
-    warningSoft: 'rgba(217, 119, 6, 0.08)',
-    error: '#dc2626',
-    errorSoft: 'rgba(220, 38, 38, 0.08)',
-    shadow: '0 1px 2px rgba(15, 23, 42, 0.04)',
-    focus: 'rgba(37, 99, 235, 0.18)',
-    chartGrid: 'rgba(100, 116, 139, 0.18)',
-    chartPalette: ['#2563eb', '#059669', '#7c3aed', '#d97706', '#dc2626'],
-    scrollbarThumb: 'rgba(148, 163, 184, 0.38)',
-    scrollbarThumbHover: 'rgba(100, 116, 139, 0.5)',
+    colorScheme: "light",
+    background: "#f5f6fa",
+    backgroundGlow:
+      "radial-gradient(circle at 8% 0%, rgba(59, 130, 246, 0.10), transparent 34%), radial-gradient(circle at 90% 8%, rgba(16, 185, 129, 0.08), transparent 30%)",
+    surface: "#ffffff",
+    surfaceMuted: "#f7f8fb",
+    surfaceHover: "#f1f4f8",
+    surfaceGlass: "rgba(255, 255, 255, 0.78)",
+    border: "rgba(15, 23, 42, 0.08)",
+    borderStrong: "rgba(100, 116, 139, 0.22)",
+    textPrimary: "#101828",
+    textSecondary: "#667085",
+    textTertiary: "#98a2b3",
+    accent: "#2563eb",
+    accentSoft: "rgba(37, 99, 235, 0.08)",
+    onAccent: "#ffffff",
+    success: "#059669",
+    successSoft: "rgba(5, 150, 105, 0.08)",
+    warning: "#d97706",
+    warningSoft: "rgba(217, 119, 6, 0.08)",
+    error: "#dc2626",
+    errorSoft: "rgba(220, 38, 38, 0.08)",
+    shadow: "0 18px 45px rgba(15, 23, 42, 0.06)",
+    shadowHover: "0 24px 60px rgba(15, 23, 42, 0.10)",
+    focus: "rgba(37, 99, 235, 0.20)",
+    chartGrid: "rgba(100, 116, 139, 0.16)",
+    chartPalette: ["#2563eb", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444"],
+    scrollbarThumb: "rgba(148, 163, 184, 0.42)",
+    scrollbarThumbHover: "rgba(100, 116, 139, 0.54)",
   },
   dark: {
-    colorScheme: 'dark',
-    background: '#0f172a',
-    surface: '#111827',
-    surfaceMuted: '#1f2937',
-    surfaceHover: '#273449',
-    border: 'rgba(148, 163, 184, 0.2)',
-    borderStrong: 'rgba(148, 163, 184, 0.36)',
-    textPrimary: '#f8fafc',
-    textSecondary: '#cbd5e1',
-    textTertiary: '#94a3b8',
-    accent: '#93c5fd',
-    accentSoft: 'rgba(147, 197, 253, 0.12)',
-    success: '#86efac',
-    successSoft: 'rgba(134, 239, 172, 0.1)',
-    warning: '#fcd34d',
-    warningSoft: 'rgba(252, 211, 77, 0.1)',
-    error: '#fca5a5',
-    errorSoft: 'rgba(252, 165, 165, 0.1)',
-    shadow: '0 1px 2px rgba(0, 0, 0, 0.16)',
-    focus: 'rgba(147, 197, 253, 0.24)',
-    chartGrid: 'rgba(148, 163, 184, 0.2)',
-    chartPalette: ['#93c5fd', '#86efac', '#c4b5fd', '#fcd34d', '#fca5a5'],
-    scrollbarThumb: 'rgba(148, 163, 184, 0.34)',
-    scrollbarThumbHover: 'rgba(203, 213, 225, 0.42)',
+    colorScheme: "dark",
+    background: "#0b1120",
+    backgroundGlow:
+      "radial-gradient(circle at 10% 0%, rgba(147, 197, 253, 0.14), transparent 36%), radial-gradient(circle at 88% 8%, rgba(134, 239, 172, 0.10), transparent 30%)",
+    surface: "#111827",
+    surfaceMuted: "#172033",
+    surfaceHover: "#202b42",
+    surfaceGlass: "rgba(17, 24, 39, 0.76)",
+    border: "rgba(148, 163, 184, 0.18)",
+    borderStrong: "rgba(203, 213, 225, 0.30)",
+    textPrimary: "#f8fafc",
+    textSecondary: "#cbd5e1",
+    textTertiary: "#94a3b8",
+    accent: "#93c5fd",
+    accentSoft: "rgba(147, 197, 253, 0.12)",
+    onAccent: "#0b1120",
+    success: "#86efac",
+    successSoft: "rgba(134, 239, 172, 0.10)",
+    warning: "#fcd34d",
+    warningSoft: "rgba(252, 211, 77, 0.10)",
+    error: "#fca5a5",
+    errorSoft: "rgba(252, 165, 165, 0.10)",
+    shadow: "0 20px 50px rgba(0, 0, 0, 0.28)",
+    shadowHover: "0 26px 66px rgba(0, 0, 0, 0.34)",
+    focus: "rgba(147, 197, 253, 0.28)",
+    chartGrid: "rgba(148, 163, 184, 0.18)",
+    chartPalette: ["#93c5fd", "#86efac", "#c4b5fd", "#fcd34d", "#fca5a5"],
+    scrollbarThumb: "rgba(148, 163, 184, 0.34)",
+    scrollbarThumbHover: "rgba(203, 213, 225, 0.42)",
   },
 };
 
@@ -115,9 +127,12 @@ const createInsightThemeVars = (theme: InsightThemeStyle) => css`
   color-scheme: ${theme.colorScheme};
 
   --color-background: ${theme.background};
+  --color-background-glow: ${theme.backgroundGlow};
+
   --color-surface: ${theme.surface};
   --color-surface-muted: ${theme.surfaceMuted};
   --color-surface-hover: ${theme.surfaceHover};
+  --color-surface-glass: ${theme.surfaceGlass};
 
   --color-border: ${theme.border};
   --color-border-strong: ${theme.borderStrong};
@@ -128,6 +143,7 @@ const createInsightThemeVars = (theme: InsightThemeStyle) => css`
 
   --color-accent: ${theme.accent};
   --color-accent-soft: ${theme.accentSoft};
+  --color-on-accent: ${theme.onAccent};
 
   --color-success: ${theme.success};
   --color-success-soft: ${theme.successSoft};
@@ -139,6 +155,7 @@ const createInsightThemeVars = (theme: InsightThemeStyle) => css`
   --color-error-soft: ${theme.errorSoft};
 
   --color-shadow: ${theme.shadow};
+  --color-shadow-hover: ${theme.shadowHover};
   --color-focus: ${theme.focus};
 
   --chart-grid: ${theme.chartGrid};
@@ -163,6 +180,7 @@ const GlobalStylesBase = createGlobalStyle<{ $isDark: boolean }>`
 
   * {
     scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
   }
 
   html,
@@ -206,7 +224,6 @@ const GlobalStylesBase = createGlobalStyle<{ $isDark: boolean }>`
 
   canvas {
     max-width: 100%;
-    height: auto !important;
   }
 
   *::-webkit-scrollbar {
@@ -246,7 +263,7 @@ function GlobalStyles() {
 }
 
 const legendGapPlugin = {
-  id: 'legendGap',
+  id: "legendGap",
   beforeInit(chart: any, _args: any, opts: { gap?: number } = {}) {
     const fit = chart.legend && chart.legend.fit;
 
@@ -256,7 +273,7 @@ const legendGapPlugin = {
 
     chart.legend.fit = function fitWithGap() {
       fit.bind(chart.legend)();
-      chart.legend.height += opts.gap ?? 20;
+      chart.legend.height += opts.gap ?? 16;
     };
   },
 };
@@ -275,11 +292,6 @@ ChartJS.register(
   legendGapPlugin,
 );
 
-type Msg = {
-  role: 'user' | 'bot';
-  lines: string[];
-};
-
 const buttonReset = css`
   appearance: none;
   border: 0;
@@ -292,57 +304,88 @@ const buttonReset = css`
   cursor: pointer;
 `;
 
+const getDatasetTotal = (chartData: any) => {
+  const data = chartData?.datasets?.[0]?.data;
+
+  if (!Array.isArray(data)) {
+    return 0;
+  }
+
+  return data.reduce(
+    (sum: number, value: number) => sum + Number(value || 0),
+    0,
+  );
+};
+
+const getDatasetMax = (chartData: any) => {
+  const data = chartData?.datasets?.[0]?.data;
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return 0;
+  }
+
+  return Math.max(...data.map((value: number) => Number(value || 0)));
+};
+
 export default function InsightPage() {
   const isDark = useThemeStore((state) => state.isDark);
   const theme = useMemo(() => getInsightTheme(isDark), [isDark]);
+
+  const [processes, setProcesses] = useState<any>(null);
+  const [facilities, setFacilities] = useState<any>(null);
+  const [processesTrend, setProcessesTrend] = useState<any>(null);
+  const [facilitiesTrend, setFacilitiesTrend] = useState<any>(null);
+  const [isFetching, setIsFetching] = useState(true);
+  const [hasFetched, setHasFetched] = useState(false);
 
   const doughnutOptions = useMemo(
     () => ({
       responsive: true,
       maintainAspectRatio: false,
-      cutout: '60%',
+      cutout: "66%",
       layout: {
         padding: {
-          top: 0,
-          bottom: 0,
+          top: 4,
+          right: 4,
+          bottom: 4,
+          left: 4,
         },
       },
       plugins: {
         legend: {
           display: true,
-          position: 'right' as const,
-          align: 'center' as const,
+          position: "right" as const,
+          align: "center" as const,
           labels: {
             usePointStyle: true,
-            pointStyle: 'circle',
-            color: theme.textPrimary,
+            pointStyle: "circle",
+            color: theme.textSecondary,
             font: {
-              size: 20,
-              weight: 'bold',
+              size: 13,
+              weight: 700,
             },
-            padding: 24,
-            boxWidth: 18,
-            boxHeight: 18,
+            padding: 14,
+            boxWidth: 9,
+            boxHeight: 9,
           },
         },
         legendGap: {
-          gap: 30,
+          gap: 18,
         },
         datalabels: {
-          color: '#ffffff',
+          color: "#ffffff",
           font: {
-            weight: 900,
-            size: 22,
+            weight: 800,
+            size: 13,
           },
-          padding: 14,
-          offset: 8,
-          anchor: 'center',
-          align: 'center',
+          padding: 8,
+          anchor: "center",
+          align: "center",
           formatter: (value: number, ctx: any) => {
             const arr: number[] = ctx.chart.data.datasets[0].data;
             const sum = arr.reduce((a: number, b: number) => a + b, 0);
 
-            return sum > 0 ? `${Math.round((value * 100) / sum)}%` : '0%';
+            return sum > 0 ? `${Math.round((value * 100) / sum)}%` : "0%";
           },
         },
         tooltip: {
@@ -352,14 +395,15 @@ export default function InsightPage() {
           borderColor: theme.border,
           borderWidth: 1,
           titleFont: {
-            size: 18,
-            weight: 'bold',
+            size: 13,
+            weight: "bold",
           },
           bodyFont: {
-            size: 18,
+            size: 13,
           },
-          padding: 14,
-          cornerRadius: 10,
+          padding: 12,
+          cornerRadius: 14,
+          boxPadding: 6,
         },
       },
     }),
@@ -373,19 +417,19 @@ export default function InsightPage() {
       plugins: {
         legend: {
           display: true,
-          position: 'top' as const,
-          align: 'end' as const,
+          position: "top" as const,
+          align: "end" as const,
           labels: {
             usePointStyle: true,
-            pointStyle: 'circle',
-            color: theme.textPrimary,
+            pointStyle: "circle",
+            color: theme.textSecondary,
             font: {
-              size: 18,
-              weight: 'bold',
+              size: 13,
+              weight: 700,
             },
-            padding: 16,
-            boxWidth: 18,
-            boxHeight: 18,
+            padding: 12,
+            boxWidth: 9,
+            boxHeight: 9,
           },
         },
         datalabels: {
@@ -398,14 +442,15 @@ export default function InsightPage() {
           borderColor: theme.border,
           borderWidth: 1,
           titleFont: {
-            size: 18,
-            weight: 'bold',
+            size: 13,
+            weight: "bold",
           },
           bodyFont: {
-            size: 18,
+            size: 13,
           },
-          padding: 14,
-          cornerRadius: 10,
+          padding: 12,
+          cornerRadius: 14,
+          boxPadding: 6,
         },
       },
       scales: {
@@ -413,27 +458,35 @@ export default function InsightPage() {
           beginAtZero: true,
           grid: {
             color: theme.chartGrid,
+            drawBorder: false,
+          },
+          border: {
+            display: false,
           },
           ticks: {
-            color: theme.textSecondary,
+            color: theme.textTertiary,
             font: {
-              size: 18,
-              weight: 'bold',
+              size: 12,
+              weight: 700,
             },
-            padding: 10,
+            padding: 8,
           },
         },
         x: {
           grid: {
             display: false,
+            drawBorder: false,
+          },
+          border: {
+            display: false,
           },
           ticks: {
-            color: theme.textSecondary,
+            color: theme.textTertiary,
             font: {
-              size: 18,
-              weight: 'bold',
+              size: 12,
+              weight: 700,
             },
-            padding: 10,
+            padding: 8,
           },
         },
       },
@@ -441,29 +494,9 @@ export default function InsightPage() {
     [theme],
   );
 
-  const [msgs, setMsgs] = useState<Msg[]>([
-    {
-      role: 'user',
-      lines: ['오늘 점검 횟수를 알려줘'],
-    },
-    {
-      role: 'bot',
-      lines: [
-        '안녕하세요! 오늘 점검 횟수를 알려드릴게요.',
-        '점검 횟수: 3회',
-        '배출구 별 횟수',
-        '1번 배출구 : 1회\n2번 배출구 : 2회',
-      ],
-    },
-  ]);
-
-  const [input, setInput] = useState('');
-  const [processes, setProcesses] = useState<any>(null);
-  const [facilities, setFacilities] = useState<any>(null);
-  const [processesTrend, setProcessesTrend] = useState<any>(null);
-  const [facilitiesTrend, setFacilitiesTrend] = useState<any>(null);
-
   const fetchAll = async () => {
+    setIsFetching(true);
+
     const safeFetch = async (url: string) => {
       try {
         const res = await fetch(url);
@@ -475,68 +508,41 @@ export default function InsightPage() {
 
         return await res.json();
       } catch (err) {
-        console.error('[API 연결 실패]', url, err);
+        console.error("[API 연결 실패]", url, err);
         return { success: false };
       }
     };
 
-    const [j1, j2, j3, j4] = await Promise.all([
-      safeFetch(
-        'http://192.168.10.174:5654/db/tql/get_alarm_count_equip.tql?from=2025-10-27T00:00:00&to=2025-11-24T23:59:59&limit=5',
-      ),
-      safeFetch(
-        'http://192.168.10.174:5654/db/tql/get_alarm_count.tql?from=2025-10-27T00:00:00&to=2025-10-27T23:59:59&limit=5',
-      ),
-      safeFetch(
-        'http://192.168.10.174:5654/db/tql/get_alarm_trend_equip.tql?eqpid=EQS1A0016&from=2025-10-27T00:00:00&to=2025-10-27T23:59:59&interval=60',
-      ),
-      safeFetch(
-        'http://192.168.10.174:5654/db/tql/get_alarm_trend.tql?eqpid=EQS1A0016&tagname=M606&from=2025-10-27T00:00:00&to=2025-10-27T23:59:59&interval=60',
-      ),
-    ]);
+    try {
+      const [j1, j2, j3, j4] = await Promise.all([
+        safeFetch(
+          "http://192.168.10.174:5654/db/tql/get_alarm_count_equip.tql?from=2025-10-27T00:00:00&to=2025-11-24T23:59:59&limit=5",
+        ),
+        safeFetch(
+          "http://192.168.10.174:5654/db/tql/get_alarm_count.tql?from=2025-10-27T00:00:00&to=2025-10-27T23:59:59&limit=5",
+        ),
+        safeFetch(
+          "http://192.168.10.174:5654/db/tql/get_alarm_trend_equip.tql?eqpid=EQS1A0016&from=2025-10-27T00:00:00&to=2025-10-27T23:59:59&interval=60",
+        ),
+        safeFetch(
+          "http://192.168.10.174:5654/db/tql/get_alarm_trend.tql?eqpid=EQS1A0016&tagname=M606&from=2025-10-27T00:00:00&to=2025-10-27T23:59:59&interval=60",
+        ),
+      ]);
 
-    setProcesses(j1);
-    setFacilities(j2);
-    setProcessesTrend(j3);
-    setFacilitiesTrend(j4);
+      setProcesses(j1);
+      setFacilities(j2);
+      setProcessesTrend(j3);
+      setFacilitiesTrend(j4);
+    } finally {
+      setIsFetching(false);
+      setHasFetched(true);
+    }
   };
 
   useEffect(() => {
-    fetchAll();
+    void fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const taRef = useRef<HTMLTextAreaElement | null>(null);
-
-  useEffect(() => {
-    const el = taRef.current;
-
-    if (!el) {
-      return;
-    }
-
-    el.style.height = 'auto';
-    el.style.height = `${el.scrollHeight}px`;
-  }, [input]);
-
-  const send = () => {
-    if (!input.trim()) {
-      return;
-    }
-
-    setMsgs((prev) => [...prev, { role: 'user', lines: [input.trim()] }]);
-    setInput('');
-
-    setTimeout(() => {
-      setMsgs((prev) => [...prev, { role: 'bot', lines: ['확인했습니다.'] }]);
-    }, 200);
-  };
-
-  const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      send();
-    }
-  };
 
   const doughnutDataProcess = useMemo(() => {
     if (processes?.success === true && processes.data.rows?.length > 0) {
@@ -549,23 +555,27 @@ export default function InsightPage() {
           {
             data: values,
             backgroundColor: theme.chartPalette,
-            borderWidth: 0,
+            borderColor: theme.surface,
+            borderWidth: 3,
+            hoverBorderWidth: 3,
           },
         ],
       };
     }
 
     return {
-      labels: ['A 설비', 'B 설비', 'C 설비', 'D 설비', 'E 설비'],
+      labels: ["A 설비", "B 설비", "C 설비", "D 설비", "E 설비"],
       datasets: [
         {
           data: [23, 29, 12, 21, 15],
           backgroundColor: theme.chartPalette,
-          borderWidth: 0,
+          borderColor: theme.surface,
+          borderWidth: 3,
+          hoverBorderWidth: 3,
         },
       ],
     };
-  }, [processes, theme.chartPalette]);
+  }, [processes, theme.chartPalette, theme.surface]);
 
   const doughnutDataAlarm = useMemo(() => {
     if (facilities?.success === true && facilities.data.rows?.length > 0) {
@@ -578,28 +588,35 @@ export default function InsightPage() {
           {
             data: values,
             backgroundColor: theme.chartPalette,
-            borderWidth: 0,
+            borderColor: theme.surface,
+            borderWidth: 3,
+            hoverBorderWidth: 3,
           },
         ],
       };
     }
 
     return {
-      labels: ['로터볼트', '스테이터볼트', '사이드볼트', '기타', '알 수 없음'],
+      labels: ["로터볼트", "스테이터볼트", "사이드볼트", "기타", "알 수 없음"],
       datasets: [
         {
           data: [40, 30, 20, 5, 5],
           backgroundColor: theme.chartPalette,
-          borderWidth: 0,
+          borderColor: theme.surface,
+          borderWidth: 3,
+          hoverBorderWidth: 3,
         },
       ],
     };
-  }, [facilities, theme.chartPalette]);
+  }, [facilities, theme.chartPalette, theme.surface]);
 
   const barDataProcess = useMemo(() => {
-    if (processesTrend?.success === true && processesTrend.data.rows?.length > 0) {
+    if (
+      processesTrend?.success === true &&
+      processesTrend.data.rows?.length > 0
+    ) {
       const labels = processesTrend.data.rows.map(([datetime]: any) =>
-        datetime.split(' ')[1].slice(0, 5),
+        datetime.split(" ")[1].slice(0, 5),
       );
       const values = processesTrend.data.rows.map(([_, val]: any) => val);
 
@@ -607,61 +624,106 @@ export default function InsightPage() {
         labels,
         datasets: [
           {
-            label: 'SideBolt 체결 누락',
+            label: "SideBolt 체결 누락",
             data: values,
             backgroundColor: theme.accent,
-            borderRadius: 8,
+            borderRadius: 999,
+            borderSkipped: false,
+            maxBarThickness: 36,
           },
         ],
       };
     }
 
     return {
-      labels: ['월', '화', '수', '목', '금', '토', '일'],
+      labels: ["월", "화", "수", "목", "금", "토", "일"],
       datasets: [
         {
-          label: '공정불량 발생 건수',
+          label: "공정불량 발생 건수",
           data: [15, 22, 13, 24, 35, 18, 12],
           backgroundColor: theme.accent,
-          borderRadius: 8,
-          barThickness: 30,
+          borderRadius: 999,
+          borderSkipped: false,
+          maxBarThickness: 34,
         },
       ],
     };
   }, [processesTrend, theme.accent]);
 
   const barDataAlarmTrend = useMemo(() => {
-    if (facilitiesTrend?.success === true && facilitiesTrend.data.rows?.length > 0) {
+    if (
+      facilitiesTrend?.success === true &&
+      facilitiesTrend.data.rows?.length > 0
+    ) {
       const rows = facilitiesTrend.data.rows;
-      const labels = rows.map((r: any) => r[0].split(' ')[1].slice(0, 5));
+      const labels = rows.map((r: any) => r[0].split(" ")[1].slice(0, 5));
       const values = rows.map((r: any) => r[1]);
 
       return {
         labels,
         datasets: [
           {
-            label: '설비알람 발생 건수',
+            label: "설비알람 발생 건수",
             data: values,
             backgroundColor: theme.success,
-            borderRadius: 8,
+            borderRadius: 999,
+            borderSkipped: false,
+            maxBarThickness: 36,
           },
         ],
       };
     }
 
     return {
-      labels: ['09:00', '11:00', '13:00', '15:00', '17:00'],
+      labels: ["09:00", "11:00", "13:00", "15:00", "17:00"],
       datasets: [
         {
-          label: '설비알람 Trend',
+          label: "설비알람 Trend",
           data: [5, 12, 8, 14, 9],
           backgroundColor: theme.success,
-          borderRadius: 8,
-          barThickness: 40,
+          borderRadius: 999,
+          borderSkipped: false,
+          maxBarThickness: 40,
         },
       ],
     };
   }, [facilitiesTrend, theme.success]);
+
+  const summaryCards = useMemo(
+    () => [
+      {
+        label: "공정불량 합계",
+        value: getDatasetTotal(doughnutDataProcess).toLocaleString("ko-KR"),
+        caption: "TOP 5 기준",
+        tone: "accent" as const,
+      },
+      {
+        label: "설비알람 합계",
+        value: getDatasetTotal(doughnutDataAlarm).toLocaleString("ko-KR"),
+        caption: "TOP 5 기준",
+        tone: "success" as const,
+      },
+      {
+        label: "공정불량 Peak",
+        value: getDatasetMax(barDataProcess).toLocaleString("ko-KR"),
+        caption: "Trend 최대값",
+        tone: "warning" as const,
+      },
+      {
+        label: "알람 Trend Peak",
+        value: getDatasetMax(barDataAlarmTrend).toLocaleString("ko-KR"),
+        caption: "Trend 최대값",
+        tone: "error" as const,
+      },
+    ],
+    [barDataAlarmTrend, barDataProcess, doughnutDataAlarm, doughnutDataProcess],
+  );
+
+  const validSourceCount = useMemo(() => {
+    return [processes, facilities, processesTrend, facilitiesTrend].filter(
+      (item) => item?.success === true,
+    ).length;
+  }, [facilities, facilitiesTrend, processes, processesTrend]);
 
   return (
     <>
@@ -669,107 +731,109 @@ export default function InsightPage() {
 
       <Page>
         <Main>
-          <LeftCol>
-            <Grid2x2>
-              <Panel>
+          <DashboardHeader>
+            <HeaderCopy>
+              <Eyebrow>Insight Dashboard</Eyebrow>
+              <PageTitle>불량 · 알람 인사이트</PageTitle>
+              <PageDescription>
+                공정불량과 설비알람의 상위 항목과 추이를 한 화면에서 가볍게
+                확인합니다.
+              </PageDescription>
+            </HeaderCopy>
+
+            <HeaderActions>
+              <StatusPill $isLoading={isFetching}>
+                <StatusDot $isLoading={isFetching} />
+                {hasFetched
+                  ? `데이터 소스 ${validSourceCount}/4 정상`
+                  : "데이터 불러오는 중"}
+              </StatusPill>
+
+              <RefreshButton
+                type="button"
+                aria-label="인사이트 데이터 새로고침"
+                disabled={isFetching}
+                onClick={() => void fetchAll()}
+              >
+                <MdRefresh />
+                <span>{isFetching ? "동기화 중" : "새로고침"}</span>
+              </RefreshButton>
+            </HeaderActions>
+          </DashboardHeader>
+
+          <SummaryGrid>
+            {summaryCards.map((card) => (
+              <SummaryCard key={card.label} $tone={card.tone}>
+                <SummaryMeta>
+                  <SummaryLabel>{card.label}</SummaryLabel>
+                  <SummaryCaption>{card.caption}</SummaryCaption>
+                </SummaryMeta>
+                <SummaryValue>{card.value}</SummaryValue>
+              </SummaryCard>
+            ))}
+          </SummaryGrid>
+
+          <ChartGrid>
+            <Panel>
+              <PanelHeading>
                 <PanelTitle>공정불량 TOP 5</PanelTitle>
+                <PanelSubtitle>설비별 발생 비중</PanelSubtitle>
+              </PanelHeading>
 
-                <ChartBox>
-                  <Doughnut
-                    data={doughnutDataProcess}
-                    options={doughnutOptions as any}
-                  />
-                </ChartBox>
-              </Panel>
-
-              <Panel>
-                <PanelTitle>공정불량 Trend</PanelTitle>
-
-                <ChartBox>
-                  <Bar data={barDataProcess} options={barOptions as any} />
-                </ChartBox>
-              </Panel>
-
-              <Panel>
-                <PanelTitle>설비알람 TOP 5</PanelTitle>
-
-                <ChartBox>
-                  <Doughnut
-                    data={doughnutDataAlarm}
-                    options={doughnutOptions as any}
-                  />
-                </ChartBox>
-              </Panel>
-
-              <Panel>
-                <PanelTitle>설비알람 Trend</PanelTitle>
-
-                <ChartBox>
-                  <Bar data={barDataAlarmTrend} options={barOptions as any} />
-                </ChartBox>
-              </Panel>
-            </Grid2x2>
-          </LeftCol>
-
-          <RightCol>
-            <ChatCard>
-              <ChatHeader>
-                <ChatTitle>
-                  <RiRobot2Fill />
-                  AI 챗봇 어시스턴트
-                </ChatTitle>
-
-                <RefreshButton
-                  type="button"
-                  aria-label="새로고침"
-                  onClick={fetchAll}
-                >
-                  <MdRefresh />
-                </RefreshButton>
-              </ChatHeader>
-
-              <ChatBody>
-                {msgs.map((message, index) => (
-                  <MsgRow key={`${message.role}-${index}`} $role={message.role}>
-                    {message.role === 'bot' && (
-                      <BotAvatar>
-                        <RiRobot2Fill />
-                      </BotAvatar>
-                    )}
-
-                    <MessageBubble $role={message.role}>
-                      {message.lines.map((line, lineIndex) => (
-                        <MsgLine key={`${line}-${lineIndex}`}>{line}</MsgLine>
-                      ))}
-                    </MessageBubble>
-                  </MsgRow>
-                ))}
-              </ChatBody>
-
-              <ChatInput>
-                <textarea
-                  ref={taRef}
-                  rows={1}
-                  placeholder="메세지를 입력하세요..."
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={onKeyDown}
+              <ChartBox>
+                <Doughnut
+                  data={doughnutDataProcess}
+                  options={doughnutOptions as any}
                 />
+              </ChartBox>
+            </Panel>
 
-                <button type="button" aria-label="전송" onClick={send}>
-                  <MdSend size={28} />
-                </button>
-              </ChatInput>
-            </ChatCard>
-          </RightCol>
+            <Panel>
+              <PanelHeading>
+                <PanelTitle>공정불량 Trend</PanelTitle>
+                <PanelSubtitle>기간 내 발생 추이</PanelSubtitle>
+              </PanelHeading>
+
+              <ChartBox>
+                <Bar data={barDataProcess} options={barOptions as any} />
+              </ChartBox>
+            </Panel>
+
+            <Panel>
+              <PanelHeading>
+                <PanelTitle>설비알람 TOP 5</PanelTitle>
+                <PanelSubtitle>알람 유형별 비중</PanelSubtitle>
+              </PanelHeading>
+
+              <ChartBox>
+                <Doughnut
+                  data={doughnutDataAlarm}
+                  options={doughnutOptions as any}
+                />
+              </ChartBox>
+            </Panel>
+
+            <Panel>
+              <PanelHeading>
+                <PanelTitle>설비알람 Trend</PanelTitle>
+                <PanelSubtitle>시간대별 알람 흐름</PanelSubtitle>
+              </PanelHeading>
+
+              <ChartBox>
+                <Bar data={barDataAlarmTrend} options={barOptions as any} />
+              </ChartBox>
+            </Panel>
+          </ChartGrid>
         </Main>
 
-        <AlertStack>
-          {!processes?.success && <AlertBox msg="공정불량 TOP5" />}
-          {!facilities?.success && <AlertBox msg="설비알람 TOP5" />}
-          {!processesTrend?.success && <AlertBox msg="공정불량 Trend" />}
-          {!facilitiesTrend?.success && <AlertBox msg="설비알람 Trend" />}
-        </AlertStack>
+        {hasFetched && (
+          <AlertStack>
+            {!processes?.success && <AlertBox msg="공정불량 TOP5" />}
+            {!facilities?.success && <AlertBox msg="설비알람 TOP5" />}
+            {!processesTrend?.success && <AlertBox msg="공정불량 Trend" />}
+            {!facilitiesTrend?.success && <AlertBox msg="설비알람 Trend" />}
+          </AlertStack>
+        )}
       </Page>
     </>
   );
@@ -786,207 +850,170 @@ function AlertBox({ msg }: { msg: string }) {
   );
 }
 
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
 const Page = styled.div`
   width: 100%;
-  min-height: 100vh;
-  background: var(--color-background);
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--color-background-glow), var(--color-background);
   color: var(--color-text-primary);
 `;
 
 const Main = styled.main`
   display: grid;
-  grid-template-columns: 1fr 540px;
-  gap: 24px;
-  height: 100vh;
-  padding: 40px;
-  overflow: hidden;
-  box-sizing: border-box;
-  align-items: stretch;
-
-  @media (max-width: 1400px) {
-    grid-template-columns: 1fr 450px;
-  }
-
-  @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
-    height: auto;
-    min-height: 100vh;
-    overflow: auto;
-  }
-
-  @media (max-width: 768px) {
-    padding: 20px;
-  }
-`;
-
-const LeftCol = styled.div`
-  display: grid;
-  grid-template-rows: 1fr;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: clamp(14px, 1.4vw, 22px);
+  width: 100%;
   height: 100%;
   min-height: 0;
   overflow: hidden;
-
-  @media (max-width: 1100px) {
-    overflow: visible;
-  }
-`;
-
-const Grid2x2 = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-  height: 100%;
-  min-height: 0;
-  align-items: stretch;
+  padding: clamp(18px, 2.2vw, 34px);
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    height: auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 `;
 
-const RightCol = styled.aside`
-  position: sticky;
-  top: 40px;
-  height: 100%;
-  min-height: 0;
-  align-self: start;
-
-  @media (max-width: 1100px) {
-    position: static;
-    height: 800px;
-  }
-
-  @media (max-width: 768px) {
-    height: 680px;
-  }
-`;
-
-const Panel = styled.section`
+const DashboardHeader = styled.header`
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  padding: 32px;
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  background: var(--color-surface);
-  box-shadow: var(--color-shadow);
-  color: var(--color-text-primary);
-
-  @media (max-width: 768px) {
-    padding: 22px;
-    border-radius: 18px;
-  }
-`;
-
-const PanelTitle = styled.h3`
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin: 0 0 30px;
-  color: var(--color-text-primary);
-  font-size: 30px;
-  font-weight: 900;
-  line-height: 1.25;
-  letter-spacing: -0.04em;
-  word-break: keep-all;
+  gap: 20px;
+  min-width: 0;
 
-  @media (max-width: 768px) {
-    margin-bottom: 22px;
-    font-size: 24px;
+  @media (max-width: 980px) {
+    flex-direction: column;
   }
 `;
 
-const ChartBox = styled.div`
-  position: relative;
-  width: 100%;
-  flex: 1;
-  min-height: 300px;
+const HeaderCopy = styled.div`
+  display: grid;
+  gap: 8px;
+  min-width: 0;
 `;
 
-const ChatCard = styled.section`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  background: var(--color-surface);
-  box-shadow: var(--color-shadow);
-  color: var(--color-text-primary);
-`;
-
-const ChatHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 24px 30px;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface-muted);
-  color: var(--color-text-primary);
-
-  @media (max-width: 768px) {
-    padding: 20px;
-  }
-`;
-
-const ChatTitle = styled.span`
+const Eyebrow = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  min-width: 0;
+  width: fit-content;
+  color: var(--color-accent);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  backdrop-filter: blur(18px) saturate(1.12);
+`;
+
+const PageTitle = styled.h1`
+  margin: 0;
   color: var(--color-text-primary);
-  font-size: 26px;
-  font-weight: 900;
-  line-height: 1.35;
-  letter-spacing: -0.03em;
+  font-size: clamp(30px, 2.8vw, 44px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+`;
+
+const PageDescription = styled.p`
+  max-width: 760px;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: clamp(14px, 1.05vw, 16px);
+  font-weight: 600;
+  line-height: 1.2;
   word-break: keep-all;
+`;
 
-  svg {
-    width: 32px;
-    height: 32px;
-    flex: 0 0 auto;
-    color: var(--color-accent);
-  }
+const HeaderActions = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
 
-  @media (max-width: 768px) {
-    font-size: 22px;
+  @media (max-width: 980px) {
+    justify-content: flex-start;
   }
+`;
+
+const StatusPill = styled.div<{ $isLoading: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface-glass);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  backdrop-filter: blur(18px) saturate(1.12);
+`;
+
+const StatusDot = styled.span<{ $isLoading: boolean }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: ${({ $isLoading }) =>
+    $isLoading ? "var(--color-warning)" : "var(--color-success)"};
+  box-shadow: 0 0 0 4px
+    ${({ $isLoading }) =>
+      $isLoading ? "var(--color-warning-soft)" : "var(--color-success-soft)"};
 `;
 
 const RefreshButton = styled.button`
   ${buttonReset};
 
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 15px;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
+  border-radius: 999px;
+  background: var(--color-surface-glass);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+  backdrop-filter: blur(18px) saturate(1.12);
   transition:
     transform 160ms ease,
     border-color 160ms ease,
     background 160ms ease,
-    color 160ms ease;
+    color 160ms ease,
+    opacity 160ms ease;
 
   svg {
-    width: 28px;
-    height: 28px;
+    width: 18px;
+    height: 18px;
+    color: var(--color-accent);
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     transform: translateY(-1px);
     border-color: var(--color-border-strong);
-    background: var(--color-surface-hover);
-    color: var(--color-text-primary);
+    background: var(--color-surface);
+  }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.72;
+
+    svg {
+      animation: ${spin} 900ms linear infinite;
+    }
   }
 
   &:focus-visible {
@@ -995,163 +1022,189 @@ const RefreshButton = styled.button`
   }
 `;
 
-const ChatBody = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 24px;
-  min-height: 0;
-  padding: 30px;
-  overflow-y: auto;
+const SummaryGrid = styled.section`
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, 1vw, 16px);
+  min-width: 0;
 
-  @media (max-width: 768px) {
-    padding: 22px;
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
   }
 `;
 
-const MsgRow = styled.div<{ $role: 'user' | 'bot' }>`
+const SummaryCard = styled.article<{
+  $tone: "accent" | "success" | "warning" | "error";
+}>`
   display: flex;
-  align-items: flex-start;
-  justify-content: ${({ $role }) =>
-    $role === 'user' ? 'flex-end' : 'flex-start'};
-  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  min-height: 78px;
+  padding: 16px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface-glass);
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.045);
+  backdrop-filter: blur(18px) saturate(1.12);
+
+  &::before {
+    width: 8px;
+    height: 36px;
+    flex: 0 0 auto;
+    order: -1;
+    border-radius: 999px;
+    background: ${({ $tone }) => `var(--color-${$tone})`};
+    content: "";
+  }
 `;
 
-const BotAvatar = styled.div`
+const SummaryMeta = styled.div`
   display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
+  gap: 4px;
+  min-width: 0;
+`;
+
+const SummaryLabel = styled.div`
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const SummaryCaption = styled.div`
+  overflow: hidden;
+  color: var(--color-text-tertiary);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const SummaryValue = styled.div`
   flex: 0 0 auto;
+  color: var(--color-text-primary);
+  font-size: clamp(24px, 2.3vw, 34px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.055em;
+`;
+
+const ChartGrid = styled.section`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 1.4vw, 22px);
+  min-height: 0;
+  overflow: hidden;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    overflow: visible;
+  }
+`;
+
+const Panel = styled.section`
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 14px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(18px, 1.6vw, 26px);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent),
+    var(--color-surface-glass);
+  box-shadow: var(--color-shadow);
+  color: var(--color-text-primary);
+  backdrop-filter: blur(22px) saturate(1.12);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface);
+    box-shadow: var(--color-shadow-hover);
+  }
+
+  @media (max-width: 900px) {
+    min-height: 380px;
+  }
+`;
+
+const PanelHeading = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+`;
+
+const PanelTitle = styled.h3`
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: clamp(18px, 1.45vw, 23px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+  word-break: keep-all;
+`;
+
+const PanelSubtitle = styled.div`
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  flex: 0 0 auto;
+  padding: 0 10px;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: var(--color-surface-muted);
-  color: var(--color-accent);
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
 `;
 
-const MessageBubble = styled.div<{ $role: 'user' | 'bot' }>`
-  max-width: 80%;
-  padding: 18px 24px;
-  border: 1px solid
-    ${({ $role }) =>
-      $role === 'user' ? 'var(--color-accent)' : 'var(--color-border)'};
-  border-radius: 20px;
-  border-top-left-radius: ${({ $role }) => ($role === 'bot' ? '4px' : '20px')};
-  border-top-right-radius: ${({ $role }) =>
-    $role === 'user' ? '4px' : '20px'};
-  background: ${({ $role }) =>
-    $role === 'user' ? 'var(--color-accent-soft)' : 'var(--color-surface-muted)'};
-  color: ${({ $role }) =>
-    $role === 'user' ? 'var(--color-accent)' : 'var(--color-text-primary)'};
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
-
-  @media (max-width: 768px) {
-    max-width: 86%;
-    padding: 16px 18px;
-    font-size: 18px;
-  }
-`;
-
-const MsgLine = styled.span`
-  display: block;
-`;
-
-const ChatInput = styled.div`
-  display: flex;
-  align-items: flex-end;
-  gap: 16px;
-  margin: 20px;
-  padding: 20px;
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  background: var(--color-surface-muted);
-  transition: border-color 160ms ease;
-
-  &:focus-within {
-    border-color: var(--color-accent);
-  }
-
-  textarea {
-    flex: 1;
-    min-height: 56px;
-    max-height: 160px;
-    padding: 12px 16px;
-    resize: none;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: var(--color-text-primary);
-    font-size: 22px;
-    font-weight: 500;
-    line-height: 1.5;
-
-    &::placeholder {
-      color: var(--color-text-tertiary);
-    }
-  }
-
-  button {
-    ${buttonReset};
-
-    display: grid;
-    place-items: center;
-    width: 56px;
-    height: 56px;
-    flex: 0 0 auto;
-    border-radius: 999px;
-    background: var(--color-accent);
-    color: var(--color-surface);
-    transition:
-      transform 160ms ease,
-      background 160ms ease;
-
-    svg {
-      width: 28px;
-      height: 28px;
-    }
-
-    &:hover {
-      transform: translateY(-1px);
-    }
-
-    &:focus-visible {
-      outline: 3px solid var(--color-focus);
-      outline-offset: 2px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    margin: 16px;
-    padding: 16px;
-
-    textarea {
-      font-size: 18px;
-    }
-  }
+const ChartBox = styled.div`
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 `;
 
 const AlertStack = styled.div`
   position: fixed;
-  bottom: 30px;
-  left: 30px;
+  bottom: 24px;
+  left: 24px;
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  max-width: min(460px, calc(100vw - 48px));
 
   @media (max-width: 768px) {
-    right: 20px;
-    bottom: 20px;
-    left: 20px;
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    max-width: none;
   }
 `;
 
@@ -1159,21 +1212,23 @@ const AlertToast = styled.div`
   display: inline-flex;
   align-items: center;
   width: auto;
-  padding: 16px 24px;
+  padding: 12px 16px;
   border: 1px solid var(--color-error);
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--color-error-soft);
   color: var(--color-error);
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1.45;
   word-break: keep-all;
+  box-shadow: var(--color-shadow);
+  backdrop-filter: blur(16px) saturate(1.1);
 
   svg {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     flex: 0 0 auto;
-    margin-right: 12px;
+    margin-right: 8px;
   }
 
   b {
@@ -1182,6 +1237,5 @@ const AlertToast = styled.div`
 
   @media (max-width: 768px) {
     width: 100%;
-    font-size: 16px;
   }
 `;

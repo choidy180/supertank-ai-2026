@@ -31,6 +31,7 @@ type SidebarRouteItem = {
   href: string;
   matchPath?: string;
   matchQuery?: Record<string, string>;
+  exact?: boolean;
 };
 
 type SidebarChildItem = SidebarRouteItem & {
@@ -132,6 +133,7 @@ const MENU_GROUPS: SidebarMenuGroup[] = [
         label: '타임체크 현황',
         icon: <Clock size={18} />,
         href: '/timecheck',
+        exact: true,
       },
       {
         id: 'timecheck-history',
@@ -294,8 +296,9 @@ const isRouteActive = (
 ) => {
   const matchPath = item.matchPath ?? getPathnameFromHref(item.href);
 
-  const isPathMatched =
-    pathname === matchPath || pathname.startsWith(`${matchPath}/`);
+  const isPathMatched = item.exact
+    ? pathname === matchPath
+    : pathname === matchPath || pathname.startsWith(`${matchPath}/`);
 
   if (!isPathMatched) {
     return false;
