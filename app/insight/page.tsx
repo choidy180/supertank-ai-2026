@@ -58,65 +58,63 @@ type InsightThemeStyle = {
 const INSIGHT_THEME_STYLES: Record<ThemeMode, InsightThemeStyle> = {
   light: {
     colorScheme: "light",
-    background: "#f5f6fa",
-    backgroundGlow:
-      "radial-gradient(circle at 8% 0%, rgba(59, 130, 246, 0.10), transparent 34%), radial-gradient(circle at 90% 8%, rgba(16, 185, 129, 0.08), transparent 30%)",
+    background: "#f7f8fa",
+    backgroundGlow: "transparent",
     surface: "#ffffff",
-    surfaceMuted: "#f7f8fb",
-    surfaceHover: "#f1f4f8",
-    surfaceGlass: "rgba(255, 255, 255, 0.78)",
-    border: "rgba(15, 23, 42, 0.08)",
-    borderStrong: "rgba(100, 116, 139, 0.22)",
-    textPrimary: "#101828",
-    textSecondary: "#667085",
-    textTertiary: "#98a2b3",
+    surfaceMuted: "#f8fafc",
+    surfaceHover: "#f1f5f9",
+    surfaceGlass: "#ffffff",
+    border: "#e5e7eb",
+    borderStrong: "#cbd5e1",
+    textPrimary: "#111827",
+    textSecondary: "#475569",
+    textTertiary: "#94a3b8",
     accent: "#2563eb",
     accentSoft: "rgba(37, 99, 235, 0.08)",
     onAccent: "#ffffff",
-    success: "#059669",
-    successSoft: "rgba(5, 150, 105, 0.08)",
-    warning: "#d97706",
-    warningSoft: "rgba(217, 119, 6, 0.08)",
-    error: "#dc2626",
-    errorSoft: "rgba(220, 38, 38, 0.08)",
-    shadow: "0 18px 45px rgba(15, 23, 42, 0.06)",
-    shadowHover: "0 24px 60px rgba(15, 23, 42, 0.10)",
+    success: "#16a34a",
+    successSoft: "rgba(22, 163, 74, 0.08)",
+    warning: "#f59e0b",
+    warningSoft: "rgba(245, 158, 11, 0.10)",
+    error: "#ef4444",
+    errorSoft: "rgba(239, 68, 68, 0.08)",
+    shadow: "0 1px 2px rgba(15, 23, 42, 0.04)",
+    shadowHover: "0 8px 24px rgba(15, 23, 42, 0.08)",
     focus: "rgba(37, 99, 235, 0.20)",
     chartGrid: "rgba(100, 116, 139, 0.16)",
-    chartPalette: ["#2563eb", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444"],
+    chartPalette: ["#2563eb", "#16a34a", "#f59e0b", "#ef4444", "#64748b"],
     scrollbarThumb: "rgba(148, 163, 184, 0.42)",
     scrollbarThumbHover: "rgba(100, 116, 139, 0.54)",
   },
   dark: {
     colorScheme: "dark",
-    background: "#0b1120",
-    backgroundGlow:
-      "radial-gradient(circle at 10% 0%, rgba(147, 197, 253, 0.14), transparent 36%), radial-gradient(circle at 88% 8%, rgba(134, 239, 172, 0.10), transparent 30%)",
-    surface: "#111827",
-    surfaceMuted: "#172033",
-    surfaceHover: "#202b42",
-    surfaceGlass: "rgba(17, 24, 39, 0.76)",
-    border: "rgba(148, 163, 184, 0.18)",
-    borderStrong: "rgba(203, 213, 225, 0.30)",
-    textPrimary: "#f8fafc",
-    textSecondary: "#cbd5e1",
-    textTertiary: "#94a3b8",
-    accent: "#93c5fd",
-    accentSoft: "rgba(147, 197, 253, 0.12)",
-    onAccent: "#0b1120",
-    success: "#86efac",
-    successSoft: "rgba(134, 239, 172, 0.10)",
-    warning: "#fcd34d",
-    warningSoft: "rgba(252, 211, 77, 0.10)",
-    error: "#fca5a5",
-    errorSoft: "rgba(252, 165, 165, 0.10)",
-    shadow: "0 20px 50px rgba(0, 0, 0, 0.28)",
-    shadowHover: "0 26px 66px rgba(0, 0, 0, 0.34)",
-    focus: "rgba(147, 197, 253, 0.28)",
-    chartGrid: "rgba(148, 163, 184, 0.18)",
-    chartPalette: ["#93c5fd", "#86efac", "#c4b5fd", "#fcd34d", "#fca5a5"],
-    scrollbarThumb: "rgba(148, 163, 184, 0.34)",
-    scrollbarThumbHover: "rgba(203, 213, 225, 0.42)",
+    background: "#141414",
+    backgroundGlow: "transparent",
+    surface: "#181818",
+    surfaceMuted: "#1d1d1d",
+    surfaceHover: "#222222",
+    surfaceGlass: "#181818",
+    border: "#2a2a2a",
+    borderStrong: "#3a3a3a",
+    textPrimary: "#f5f5f5",
+    textSecondary: "#d4d4d4",
+    textTertiary: "#8a8a8a",
+    accent: "#2563eb",
+    accentSoft: "rgba(37, 99, 235, 0.16)",
+    onAccent: "#ffffff",
+    success: "#16a34a",
+    successSoft: "rgba(22, 163, 74, 0.16)",
+    warning: "#f59e0b",
+    warningSoft: "rgba(245, 158, 11, 0.16)",
+    error: "#ef4444",
+    errorSoft: "rgba(239, 68, 68, 0.16)",
+    shadow: "0 1px 2px rgba(0, 0, 0, 0.28)",
+    shadowHover: "0 8px 24px rgba(0, 0, 0, 0.34)",
+    focus: "rgba(37, 99, 235, 0.28)",
+    chartGrid: "#2a2a2a",
+    chartPalette: ["#2563eb", "#16a34a", "#f59e0b", "#ef4444", "#737373"],
+    scrollbarThumb: "#3a3a3a",
+    scrollbarThumbHover: "#525252",
   },
 };
 
@@ -203,7 +201,7 @@ const GlobalStylesBase = createGlobalStyle<{ $isDark: boolean }>`
   }
 
   body {
-    overflow: hidden;
+    overflow-x: hidden;
   }
 
   a {
@@ -375,7 +373,7 @@ export default function InsightPage() {
         datalabels: {
           color: "#ffffff",
           font: {
-            weight: 800,
+            weight: 700,
             size: 13,
           },
           padding: 8,
@@ -862,7 +860,7 @@ const Page = styled.div`
   height: 100dvh;
   min-height: 0;
   overflow: hidden;
-  background: var(--color-background-glow), var(--color-background);
+  background: var(--color-background);
   color: var(--color-text-primary);
 `;
 
@@ -908,13 +906,12 @@ const Eyebrow = styled.div`
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
-  backdrop-filter: blur(18px) saturate(1.12);
 `;
 
 const PageTitle = styled.h1`
   margin: 0;
   color: var(--color-text-primary);
-  font-size: clamp(30px, 2.8vw, 44px);
+  font-size: clamp(30px, 2.8vw, 36px);
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.055em;
@@ -951,12 +948,11 @@ const StatusPill = styled.div<{ $isLoading: boolean }>`
   padding: 0 14px;
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: var(--color-surface-glass);
+  background: var(--color-surface);
   color: var(--color-text-secondary);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
-  backdrop-filter: blur(18px) saturate(1.12);
 `;
 
 const StatusDot = styled.span<{ $isLoading: boolean }>`
@@ -981,13 +977,12 @@ const RefreshButton = styled.button`
   padding: 0 15px;
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: var(--color-surface-glass);
+  background: var(--color-surface);
   color: var(--color-text-primary);
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
   box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
-  backdrop-filter: blur(18px) saturate(1.12);
   transition:
     transform 160ms ease,
     border-color 160ms ease,
@@ -1049,9 +1044,8 @@ const SummaryCard = styled.article<{
   padding: 16px 18px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: var(--color-surface-glass);
+  background: var(--color-surface);
   box-shadow: 0 12px 34px rgba(15, 23, 42, 0.045);
-  backdrop-filter: blur(18px) saturate(1.12);
 
   &::before {
     width: 8px;
@@ -1125,12 +1119,9 @@ const Panel = styled.section`
   padding: clamp(18px, 1.6vw, 26px);
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent),
-    var(--color-surface-glass);
+  background: var(--color-surface);
   box-shadow: var(--color-shadow);
   color: var(--color-text-primary);
-  backdrop-filter: blur(22px) saturate(1.12);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -1178,7 +1169,7 @@ const PanelSubtitle = styled.div`
   background: var(--color-surface-muted);
   color: var(--color-text-tertiary);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
 `;
 
@@ -1222,7 +1213,6 @@ const AlertToast = styled.div`
   line-height: 1.45;
   word-break: keep-all;
   box-shadow: var(--color-shadow);
-  backdrop-filter: blur(16px) saturate(1.1);
 
   svg {
     width: 20px;
@@ -1232,7 +1222,7 @@ const AlertToast = styled.div`
   }
 
   b {
-    font-weight: 900;
+    font-weight: 700;
   }
 
   @media (max-width: 768px) {

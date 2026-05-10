@@ -91,8 +91,8 @@ const Eyebrow = styled.div<{ $isDark: boolean }>`
 
 const PageTitle = styled.h1<{ $isDark: boolean }>`
   margin: 0;
-  font-size: clamp(28px, 3vw, 38px);
-  font-weight: 800;
+  font-size: clamp(28px, 3vw, 30px);
+  font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1.1;
   color: ${({ $isDark }) => ($isDark ? '#f5f5f7' : '#1d1d1f')};
@@ -152,6 +152,7 @@ const getPillStyle = ($tone: 'blue' | 'green' | 'red', $isDark: boolean) => {
 
 const MetaPill = styled.div<{ $tone: 'blue' | 'green' | 'red'; $isDark: boolean }>`
   display: inline-flex;
+  justify-content: center;
   align-items: center;
   min-height: 40px;
   padding: 0 16px;
@@ -160,6 +161,7 @@ const MetaPill = styled.div<{ $tone: 'blue' | 'green' | 'red'; $isDark: boolean 
   font-weight: 600;
   letter-spacing: -0.02em;
   transition: all 0.3s ease;
+  min-width: 204px;
   
   /* 분리한 스타일 함수 적용 */
   ${({ $tone, $isDark }) => getPillStyle($tone, $isDark)}

@@ -29,6 +29,7 @@ type ThemeStyle = {
 
   blue: string;
   blueSoft: string;
+  onBlue: string;
 
   green: string;
   greenSoft: string;
@@ -43,6 +44,10 @@ type ThemeStyle = {
   shadowSoft: string;
   focus: string;
 
+  overlay: string;
+  selectionBg: string;
+  selectionText: string;
+
   scrollbarThumb: string;
   scrollbarThumbHover: string;
 };
@@ -51,81 +56,91 @@ const THEME_STYLES: Record<ThemeMode, ThemeStyle> = {
   light: {
     colorScheme: 'light',
 
-    bg0: '#f5f7fb',
-    bg1: '#f8fafc',
-    bg2: '#eef2f7',
+    bg0: '#f6f7f9',
+    bg1: '#ffffff',
+    bg2: '#f3f4f6',
 
     surface1: '#ffffff',
-    surface2: '#f8fafc',
-    surface3: '#f1f5f9',
+    surface2: '#f9fafb',
+    surface3: '#f3f4f6',
     surface4: '#e5e7eb',
 
     lineSoft: '#e5e7eb',
-    lineStrong: '#cbd5e1',
+    lineStrong: '#d1d5db',
 
     textStrong: '#111827',
-    textPrimary: '#334155',
-    textSecondary: '#64748b',
-    textMuted: '#94a3b8',
+    textPrimary: '#1f2937',
+    textSecondary: '#6b7280',
+    textMuted: '#9ca3af',
 
     blue: '#2563eb',
     blueSoft: 'rgba(37, 99, 235, 0.08)',
+    onBlue: '#ffffff',
 
-    green: '#059669',
-    greenSoft: 'rgba(5, 150, 105, 0.08)',
+    green: '#16a34a',
+    greenSoft: 'rgba(22, 163, 74, 0.08)',
 
-    amber: '#d97706',
-    amberSoft: 'rgba(217, 119, 6, 0.08)',
+    amber: '#f59e0b',
+    amberSoft: 'rgba(245, 158, 11, 0.1)',
 
-    red: '#dc2626',
-    redSoft: 'rgba(220, 38, 38, 0.08)',
+    red: '#ef4444',
+    redSoft: 'rgba(239, 68, 68, 0.08)',
 
-    shadowPanel: '0 1px 2px rgba(15, 23, 42, 0.04)',
-    shadowSoft: '0 1px 2px rgba(15, 23, 42, 0.03)',
-    focus: 'rgba(37, 99, 235, 0.18)',
+    shadowPanel: '0 1px 2px rgba(15, 23, 42, 0.05)',
+    shadowSoft: '0 1px 2px rgba(15, 23, 42, 0.035)',
+    focus: 'rgba(37, 99, 235, 0.22)',
 
-    scrollbarThumb: 'rgba(148, 163, 184, 0.38)',
-    scrollbarThumbHover: 'rgba(100, 116, 139, 0.5)',
+    overlay: 'rgba(17, 24, 39, 0.52)',
+    selectionBg: '#2563eb',
+    selectionText: '#ffffff',
+
+    scrollbarThumb: 'rgba(107, 114, 128, 0.34)',
+    scrollbarThumbHover: 'rgba(75, 85, 99, 0.54)',
   },
 
   dark: {
     colorScheme: 'dark',
 
-    bg0: '#0f172a',
-    bg1: '#111827',
-    bg2: '#1f2937',
+    bg0: '#141414',
+    bg1: '#181818',
+    bg2: '#1d1d1d',
 
-    surface1: '#111827',
-    surface2: '#1f2937',
-    surface3: '#273449',
-    surface4: '#334155',
+    surface1: '#181818',
+    surface2: '#1d1d1d',
+    surface3: '#222222',
+    surface4: '#2a2a2a',
 
-    lineSoft: 'rgba(148, 163, 184, 0.2)',
-    lineStrong: 'rgba(148, 163, 184, 0.36)',
+    lineSoft: '#2a2a2a',
+    lineStrong: '#3a3a3a',
 
-    textStrong: '#f8fafc',
-    textPrimary: '#cbd5e1',
-    textSecondary: '#94a3b8',
-    textMuted: '#64748b',
+    textStrong: '#f5f5f5',
+    textPrimary: '#d4d4d4',
+    textSecondary: '#a3a3a3',
+    textMuted: '#737373',
 
-    blue: '#93c5fd',
-    blueSoft: 'rgba(147, 197, 253, 0.12)',
+    blue: '#2563eb',
+    blueSoft: 'rgba(37, 99, 235, 0.16)',
+    onBlue: '#ffffff',
 
-    green: '#86efac',
-    greenSoft: 'rgba(134, 239, 172, 0.1)',
+    green: '#16a34a',
+    greenSoft: 'rgba(22, 163, 74, 0.14)',
 
-    amber: '#fcd34d',
-    amberSoft: 'rgba(252, 211, 77, 0.1)',
+    amber: '#f59e0b',
+    amberSoft: 'rgba(245, 158, 11, 0.16)',
 
-    red: '#fca5a5',
-    redSoft: 'rgba(252, 165, 165, 0.1)',
+    red: '#ef4444',
+    redSoft: 'rgba(239, 68, 68, 0.14)',
 
-    shadowPanel: '0 1px 2px rgba(0, 0, 0, 0.16)',
-    shadowSoft: '0 1px 2px rgba(0, 0, 0, 0.12)',
-    focus: 'rgba(147, 197, 253, 0.24)',
+    shadowPanel: '0 1px 2px rgba(0, 0, 0, 0.28)',
+    shadowSoft: '0 1px 2px rgba(0, 0, 0, 0.2)',
+    focus: 'rgba(37, 99, 235, 0.34)',
 
-    scrollbarThumb: 'rgba(148, 163, 184, 0.34)',
-    scrollbarThumbHover: 'rgba(203, 213, 225, 0.42)',
+    overlay: 'rgba(0, 0, 0, 0.68)',
+    selectionBg: '#2563eb',
+    selectionText: '#ffffff',
+
+    scrollbarThumb: 'rgba(115, 115, 115, 0.42)',
+    scrollbarThumbHover: 'rgba(163, 163, 163, 0.58)',
   },
 };
 
@@ -154,6 +169,7 @@ const createThemeVars = (theme: ThemeStyle) => css`
 
   --blue: ${theme.blue};
   --blue-soft: ${theme.blueSoft};
+  --on-blue: ${theme.onBlue};
 
   --green: ${theme.green};
   --green-soft: ${theme.greenSoft};
@@ -168,9 +184,14 @@ const createThemeVars = (theme: ThemeStyle) => css`
   --shadow-soft: ${theme.shadowSoft};
   --focus: ${theme.focus};
 
+  --overlay: ${theme.overlay};
+  --selection-bg: ${theme.selectionBg};
+  --selection-text: ${theme.selectionText};
+
   --scrollbar-thumb: ${theme.scrollbarThumb};
   --scrollbar-thumb-hover: ${theme.scrollbarThumbHover};
 
+  /* Existing project aliases */
   --color-background: ${theme.bg0};
 
   --color-surface: ${theme.surface1};
@@ -186,6 +207,7 @@ const createThemeVars = (theme: ThemeStyle) => css`
 
   --color-accent: ${theme.blue};
   --color-accent-soft: ${theme.blueSoft};
+  --color-on-accent: ${theme.onBlue};
 
   --color-success: ${theme.green};
   --color-success-soft: ${theme.greenSoft};
@@ -198,6 +220,17 @@ const createThemeVars = (theme: ThemeStyle) => css`
 
   --color-shadow: ${theme.shadowPanel};
   --color-focus: ${theme.focus};
+  --color-overlay: ${theme.overlay};
+
+  /* Shared shape / motion tokens */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --transition-fast: 140ms ease;
+  --transition-base: 180ms ease;
 `;
 
 const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
@@ -205,15 +238,23 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
     ${({ $isDark }) => createThemeVars(getTheme($isDark))}
   }
 
-  * {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
-  html,
+  html {
+    min-height: 100%;
+    background: var(--color-background);
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
   body {
     min-height: 100%;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
     background: var(--color-background);
     color: var(--color-text-primary);
     font-family:
@@ -225,11 +266,13 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
       'Noto Sans KR',
       sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
-  body {
-    overflow: hidden;
+  #__next,
+  #root {
+    min-height: 100%;
   }
 
   a {
@@ -248,9 +291,44 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
     color: inherit;
   }
 
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  input:disabled,
+  textarea:disabled,
+  select:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.52;
+  }
+
+  input,
+  textarea,
+  select {
+    color: var(--color-text-primary);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  :where(img, picture, video, canvas, svg) {
+    display: block;
+    max-width: 100%;
+  }
+
   *::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
 
   *::-webkit-scrollbar-track {
@@ -265,14 +343,24 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    border: 2px solid transparent;
     background: var(--scrollbar-thumb-hover);
     background-clip: padding-box;
   }
 
   ::selection {
-    background: var(--color-accent-soft);
-    color: var(--color-text-primary);
+    background: var(--selection-bg);
+    color: var(--selection-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
   }
 `;
 

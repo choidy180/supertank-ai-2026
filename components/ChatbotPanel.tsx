@@ -73,61 +73,59 @@ type ChatThemeStyle = {
 const CHAT_THEME: Record<'light' | 'dark', ChatThemeStyle> = {
   light: {
     colorScheme: 'light',
-    shell: 'rgba(246, 247, 251, 0.72)',
-    panel: 'rgba(255, 255, 255, 0.84)',
+    shell: '#f7f8fa',
+    panel: '#ffffff',
     panelSolid: '#ffffff',
-    elevated: 'rgba(255, 255, 255, 0.96)',
-    muted: 'rgba(244, 246, 250, 0.94)',
-    mutedHover: 'rgba(235, 239, 246, 0.96)',
-    border: 'rgba(17, 24, 39, 0.09)',
-    borderStrong: 'rgba(17, 24, 39, 0.16)',
+    elevated: '#ffffff',
+    muted: '#f8fafc',
+    mutedHover: '#f1f5f9',
+    border: '#e5e7eb',
+    borderStrong: '#cbd5e1',
     textPrimary: '#111827',
-    textSecondary: '#64748b',
-    textTertiary: '#9ca3af',
-    accent: '#0a84ff',
-    accentStrong: '#111827',
-    accentSoft: 'rgba(10, 132, 255, 0.1)',
+    textSecondary: '#475569',
+    textTertiary: '#94a3b8',
+    accent: '#2563eb',
+    accentStrong: '#2563eb',
+    accentSoft: 'rgba(37, 99, 235, 0.08)',
     onAccent: '#ffffff',
-    userBubble: '#111827',
+    userBubble: '#2563eb',
     userText: '#ffffff',
-    botBubble: 'rgba(255, 255, 255, 0.94)',
+    botBubble: '#ffffff',
     botText: '#111827',
     success: '#16a34a',
-    warning: '#d97706',
-    danger: '#dc2626',
-    shadow:
-      '0 24px 60px rgba(15, 23, 42, 0.12), 0 4px 16px rgba(15, 23, 42, 0.06)',
-    focus: 'rgba(10, 132, 255, 0.22)',
-    scrollbar: 'rgba(100, 116, 139, 0.28)',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    shadow: '0 1px 2px rgba(15, 23, 42, 0.04)',
+    focus: 'rgba(37, 99, 235, 0.18)',
+    scrollbar: 'rgba(148, 163, 184, 0.38)',
   },
   dark: {
     colorScheme: 'dark',
-    shell: 'rgba(2, 6, 23, 0.4)',
-    panel: 'rgba(17, 24, 39, 0.82)',
-    panelSolid: '#111827',
-    elevated: 'rgba(30, 41, 59, 0.88)',
-    muted: 'rgba(30, 41, 59, 0.68)',
-    mutedHover: 'rgba(51, 65, 85, 0.72)',
-    border: 'rgba(226, 232, 240, 0.12)',
-    borderStrong: 'rgba(226, 232, 240, 0.22)',
-    textPrimary: '#f8fafc',
-    textSecondary: '#cbd5e1',
-    textTertiary: '#94a3b8',
-    accent: '#7dd3fc',
-    accentStrong: '#f8fafc',
-    accentSoft: 'rgba(125, 211, 252, 0.12)',
-    onAccent: '#0f172a',
-    userBubble: '#f8fafc',
-    userText: '#0f172a',
-    botBubble: 'rgba(30, 41, 59, 0.78)',
-    botText: '#f8fafc',
-    success: '#86efac',
-    warning: '#fcd34d',
-    danger: '#fca5a5',
-    shadow:
-      '0 28px 72px rgba(0, 0, 0, 0.44), 0 8px 24px rgba(0, 0, 0, 0.26)',
-    focus: 'rgba(125, 211, 252, 0.26)',
-    scrollbar: 'rgba(203, 213, 225, 0.24)',
+    shell: '#141414',
+    panel: '#181818',
+    panelSolid: '#181818',
+    elevated: '#1d1d1d',
+    muted: '#1d1d1d',
+    mutedHover: '#222222',
+    border: '#2a2a2a',
+    borderStrong: '#3a3a3a',
+    textPrimary: '#f5f5f5',
+    textSecondary: '#d4d4d4',
+    textTertiary: '#8a8a8a',
+    accent: '#2563eb',
+    accentStrong: '#2563eb',
+    accentSoft: 'rgba(37, 99, 235, 0.16)',
+    onAccent: '#ffffff',
+    userBubble: '#2563eb',
+    userText: '#ffffff',
+    botBubble: '#1d1d1d',
+    botText: '#f5f5f5',
+    success: '#16a34a',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    shadow: '0 1px 2px rgba(0, 0, 0, 0.28)',
+    focus: 'rgba(37, 99, 235, 0.28)',
+    scrollbar: '#3a3a3a',
   },
 };
 
@@ -565,22 +563,10 @@ const Panel = styled.section<{ $height: string; $showHeader: boolean }>`
   min-height: 0;
   overflow: hidden;
   border: 1px solid var(--chat-border);
-  /* border-radius: 30px; */
+  border-radius: 16px;
   padding-top: 20px;
-  /* background:
-    radial-gradient(circle at 12% 0%, var(--chat-accent-soft), transparent 34%),
-    linear-gradient(180deg, var(--chat-panel), var(--chat-shell)); */
+  background: var(--chat-panel-solid);
   box-shadow: var(--chat-shadow);
-  backdrop-filter: blur(22px) saturate(1.16);
-
-  &::before {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    border-radius: inherit;
-    /* background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 28%); */
-    content: '';
-  }
 `;
 
 const PanelHeader = styled.header`
@@ -610,7 +596,7 @@ const AssistantMark = styled.div`
   border-radius: 16px;
   background: var(--chat-elevated);
   color: var(--chat-accent);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--chat-shadow);
 `;
 
 const HeaderCopy = styled.div`
@@ -622,7 +608,7 @@ const HeaderCopy = styled.div`
 const HeaderEyebrow = styled.div`
   color: var(--chat-accent);
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.13em;
   line-height: 1;
   text-transform: uppercase;
@@ -632,7 +618,7 @@ const HeaderTitle = styled.h2`
   margin: 0;
   color: var(--chat-text-primary);
   font-size: 21px;
-  font-weight: 850;
+  font-weight: 700;
   letter-spacing: -0.045em;
   line-height: 1.22;
 `;
@@ -783,7 +769,7 @@ const WelcomeCopy = styled.div`
   strong {
     color: var(--chat-text-primary);
     font-size: 13px;
-    font-weight: 900;
+    font-weight: 700;
     letter-spacing: -0.03em;
   }
 
@@ -829,7 +815,7 @@ const MessageMeta = styled.div`
   padding: 0 4px;
   color: var(--chat-text-tertiary);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.02em;
 `;
 
@@ -847,8 +833,7 @@ const MessageBubble = styled.div<{ $role: 'user' | 'bot' }>`
     $role === 'user' ? 'var(--chat-user-bubble)' : 'var(--chat-bot-bubble)'};
   color: ${({ $role }) =>
     $role === 'user' ? 'var(--chat-user-text)' : 'var(--chat-bot-text)'};
-  box-shadow: ${({ $role }) =>
-    $role === 'user' ? '0 10px 24px rgba(15, 23, 42, 0.18)' : 'none'};
+  box-shadow: none;
   font-size: 14px;
   font-weight: 650;
   line-height: 1.2;
@@ -871,7 +856,7 @@ const TypingBubble = styled.div`
   background: var(--chat-bot-bubble);
   color: var(--chat-text-secondary);
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 700;
 
   svg {
     color: var(--chat-accent);
@@ -886,7 +871,6 @@ const ComposerDock = styled.footer`
   gap: 10px;
   padding: 14px;
   border-top: 1px solid var(--chat-border);
-  /* background: linear-gradient(180deg, transparent, var(--chat-panel-solid) 30%); */
 `;
 
 const PromptRail = styled.div`
@@ -914,7 +898,7 @@ const PromptButton = styled.button`
   background: var(--chat-elevated);
   color: var(--chat-text-secondary);
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 700;
   white-space: nowrap;
   transition:
     transform 160ms ease,
@@ -950,7 +934,7 @@ const Composer = styled.div`
   border: 1px solid var(--chat-border);
   border-radius: 24px;
   background: var(--chat-elevated);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+  box-shadow: var(--chat-shadow);
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease,

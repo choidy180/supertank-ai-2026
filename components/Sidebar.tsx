@@ -98,7 +98,7 @@ const MENU_GROUPS: SidebarMenuGroup[] = [
         id: 'no-work-insight',
         label: '알람 인사이트',
         icon: <LineChart size={18} />,
-        href: '/no-work/insight',
+        href: '/no-work',
       },
       {
         id: 'no-work-action-history',
@@ -186,6 +186,8 @@ type SidebarThemeStyle = {
   textMuted: string;
   icon: string;
   iconActive: string;
+  accent: string;
+  accentSoft: string;
   logoBg: string;
   logoMark: string;
   toggleBg: string;
@@ -198,45 +200,49 @@ type SidebarThemeStyle = {
 const SIDEBAR_THEME_STYLES: Record<'light' | 'dark', SidebarThemeStyle> = {
   light: {
     background: '#ffffff',
-    border: '#e5e7eb',
-    surfaceHover: '#f8fafc',
-    activeSurface: '#f1f5f9',
-    activeStrongSurface: '#eef2f7',
+    border: '#e6e6e6',
+    surfaceHover: '#f7f7f8',
+    activeSurface: '#f8f9fb',
+    activeStrongSurface: '#f2f5fb',
     childSurface: '#ffffff',
-    childActiveSurface: '#f8fafc',
-    textPrimary: '#111827',
-    textSecondary: '#475569',
-    textMuted: '#94a3b8',
-    icon: '#64748b',
-    iconActive: '#111827',
-    logoBg: '#111827',
+    childActiveSurface: '#f7f8fa',
+    textPrimary: '#111111',
+    textSecondary: '#525252',
+    textMuted: '#9a9a9a',
+    icon: '#707070',
+    iconActive: '#2563eb',
+    accent: '#2563eb',
+    accentSoft: 'rgba(37, 99, 235, 0.08)',
+    logoBg: '#111111',
     logoMark: '#ffffff',
-    toggleBg: '#e5e7eb',
-    toggleBorder: '#d1d5db',
+    toggleBg: '#f3f4f6',
+    toggleBorder: '#dedede',
     toggleThumb: '#ffffff',
-    toggleIconActive: '#d97706',
+    toggleIconActive: '#2563eb',
     focus: 'rgba(37, 99, 235, 0.18)',
   },
   dark: {
-    background: '#111827',
-    border: 'rgba(148, 163, 184, 0.2)',
-    surfaceHover: '#1f2937',
-    activeSurface: '#1e293b',
-    activeStrongSurface: '#273449',
-    childSurface: '#111827',
-    childActiveSurface: '#1f2937',
-    textPrimary: '#f8fafc',
-    textSecondary: '#cbd5e1',
-    textMuted: '#94a3b8',
-    icon: '#94a3b8',
-    iconActive: '#f8fafc',
-    logoBg: '#f8fafc',
-    logoMark: '#111827',
-    toggleBg: 'rgba(147, 197, 253, 0.22)',
-    toggleBorder: 'rgba(147, 197, 253, 0.32)',
-    toggleThumb: '#93c5fd',
-    toggleIconActive: '#f8fafc',
-    focus: 'rgba(147, 197, 253, 0.28)',
+    background: '#141414',
+    border: '#2a2a2a',
+    surfaceHover: '#1b1b1b',
+    activeSurface: '#1a1a1a',
+    activeStrongSurface: '#202020',
+    childSurface: '#141414',
+    childActiveSurface: '#1a1a1a',
+    textPrimary: '#f5f5f5',
+    textSecondary: '#b8b8b8',
+    textMuted: '#777777',
+    icon: '#888888',
+    iconActive: '#2563eb',
+    accent: '#2563eb',
+    accentSoft: 'rgba(37, 99, 235, 0.14)',
+    logoBg: '#2563eb',
+    logoMark: '#ffffff',
+    toggleBg: '#1a1a1a',
+    toggleBorder: '#303030',
+    toggleThumb: '#f5f5f5',
+    toggleIconActive: '#2563eb',
+    focus: 'rgba(37, 99, 235, 0.32)',
   },
 };
 
@@ -260,6 +266,9 @@ const createSidebarThemeVars = (theme: SidebarThemeStyle) => css`
 
   --sidebar-icon: ${theme.icon};
   --sidebar-icon-active: ${theme.iconActive};
+
+  --sidebar-accent: ${theme.accent};
+  --sidebar-accent-soft: ${theme.accentSoft};
 
   --sidebar-logo-bg: ${theme.logoBg};
   --sidebar-logo-mark: ${theme.logoMark};
@@ -541,8 +550,8 @@ const SidebarWrapper = styled.aside<{
   display: flex;
   flex-shrink: 0;
   flex-direction: column;
-  width: ${({ $isExpanded }) => ($isExpanded ? '292px' : '80px')};
-  min-width: ${({ $isExpanded }) => ($isExpanded ? '292px' : '80px')};
+  width: ${({ $isExpanded }) => ($isExpanded ? '286px' : '76px')};
+  min-width: ${({ $isExpanded }) => ($isExpanded ? '286px' : '76px')};
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
@@ -550,8 +559,8 @@ const SidebarWrapper = styled.aside<{
   background: var(--sidebar-bg);
   color: var(--sidebar-text-primary);
   transition:
-    width 260ms cubic-bezier(0.22, 1, 0.36, 1),
-    min-width 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    min-width 220ms cubic-bezier(0.22, 1, 0.36, 1),
     background 160ms ease,
     border-color 160ms ease;
 `;
@@ -561,12 +570,13 @@ const Header = styled.div<{ $isExpanded: boolean }>`
   align-items: center;
   justify-content: ${({ $isExpanded }) =>
     $isExpanded ? 'space-between' : 'center'};
-  height: 84px;
+  height: 86px;
   flex-shrink: 0;
-  padding: ${({ $isExpanded }) => ($isExpanded ? '24px 20px' : '24px 0')};
+  padding: ${({ $isExpanded }) => ($isExpanded ? '26px 18px' : '26px 0')};
+  border-bottom: 1px solid var(--sidebar-border);
   transition:
-    padding 220ms ease,
-    justify-content 220ms ease;
+    padding 180ms ease,
+    justify-content 180ms ease;
 `;
 
 const LogoWrapper = styled(Link)<{ $isExpanded: boolean }>`
@@ -574,14 +584,16 @@ const LogoWrapper = styled(Link)<{ $isExpanded: boolean }>`
   align-items: center;
   gap: 12px;
   width: ${({ $isExpanded }) => ($isExpanded ? '210px' : '0')};
+  min-width: 0;
   overflow: hidden;
+  color: inherit;
   text-decoration: none;
   white-space: nowrap;
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   pointer-events: ${({ $isExpanded }) => ($isExpanded ? 'auto' : 'none')};
   transition:
-    width 220ms ease,
-    opacity 160ms ease;
+    width 180ms ease,
+    opacity 140ms ease;
 `;
 
 const LogoIcon = styled.div`
@@ -589,23 +601,39 @@ const LogoIcon = styled.div`
   width: 30px;
   height: 30px;
   flex: 0 0 auto;
-  border-radius: 10px;
-  background: var(--sidebar-logo-bg);
+  border: 1px solid var(--sidebar-border);
+  border-radius: 8px;
+  background: var(--sidebar-bg);
+
+  &::before {
+    position: absolute;
+    top: 7px;
+    bottom: 7px;
+    left: 8px;
+    width: 3px;
+    border-radius: 3px;
+    background: var(--sidebar-accent);
+    content: '';
+  }
 
   &::after {
     position: absolute;
-    inset: 9px;
-    border-radius: 4px;
-    background: var(--sidebar-logo-mark);
+    top: 7px;
+    right: 8px;
+    bottom: 7px;
+    left: 15px;
+    border: 1px solid var(--sidebar-text-muted);
+    border-radius: 3px;
     content: '';
+    opacity: 0.7;
   }
 `;
 
 const LogoText = styled.span`
   color: var(--sidebar-text-primary);
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
 `;
 
 const CollapseButton = styled.button`
@@ -614,16 +642,19 @@ const CollapseButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   flex: 0 0 auto;
-  border-radius: 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
   color: var(--sidebar-icon);
   transition:
-    background 160ms ease,
-    color 160ms ease;
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease;
 
   &:hover {
+    border-color: var(--sidebar-border);
     background: var(--sidebar-surface-hover);
     color: var(--sidebar-text-primary);
   }
@@ -639,6 +670,7 @@ const ScrollableMenu = styled.nav`
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-top: 14px;
 
   &::-webkit-scrollbar {
     width: 0;
@@ -648,8 +680,8 @@ const ScrollableMenu = styled.nav`
 const MenuList = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 0 14px 20px;
+  gap: 4px;
+  padding: 0 12px 20px;
   margin: 0;
   list-style: none;
 `;
@@ -662,21 +694,38 @@ const TopMenuRow = styled.div<{
   $isActive: boolean;
   $isExpanded: boolean;
 }>`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: ${({ $isExpanded }) =>
     $isExpanded ? 'space-between' : 'center'};
-  width: ${({ $isExpanded }) => ($isExpanded ? '100%' : '46px')};
+  width: ${({ $isExpanded }) => ($isExpanded ? '100%' : '48px')};
   height: 54px;
   margin: 0 auto;
-  border-radius: 16px;
+  border: 1px solid ${({ $isActive }) =>
+    $isActive ? 'var(--sidebar-border)' : 'transparent'};
+  border-radius: 10px;
   background: ${({ $isActive }) =>
     $isActive ? 'var(--sidebar-active-surface)' : 'transparent'};
   transition:
-    background 160ms ease,
-    color 160ms ease;
+    border-color 140ms ease,
+    background 140ms ease;
+
+  &::before {
+    position: absolute;
+    top: 13px;
+    bottom: 13px;
+    left: ${({ $isExpanded }) => ($isExpanded ? '0' : '5px')};
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--sidebar-accent);
+    content: '';
+    opacity: ${({ $isActive }) => ($isActive ? 1 : 0)};
+    transition: opacity 140ms ease;
+  }
 
   &:hover {
+    border-color: var(--sidebar-border);
     background: ${({ $isActive }) =>
       $isActive
         ? 'var(--sidebar-active-strong-surface)'
@@ -693,24 +742,24 @@ const TopMenuLink = styled(Link)<{
   align-items: center;
   justify-content: ${({ $isExpanded }) =>
     $isExpanded ? 'flex-start' : 'center'};
-  gap: ${({ $isExpanded }) => ($isExpanded ? '14px' : '0')};
+  gap: ${({ $isExpanded }) => ($isExpanded ? '13px' : '0')};
   width: ${({ $isExpanded, $hasChildren }) => {
     if (!$isExpanded) {
-      return '46px';
+      return '48px';
     }
 
-    return $hasChildren ? 'calc(100% - 42px)' : '100%';
+    return $hasChildren ? 'calc(100% - 40px)' : '100%';
   }};
   height: 100%;
   min-width: 0;
-  padding: ${({ $isExpanded }) => ($isExpanded ? '0 14px' : '0')};
+  padding: ${({ $isExpanded }) => ($isExpanded ? '0 12px 0 17px' : '0')};
   color: ${({ $isActive }) =>
     $isActive ? 'var(--sidebar-text-primary)' : 'var(--sidebar-text-secondary)'};
   text-decoration: none;
-  transition: color 160ms ease;
+  transition: color 140ms ease;
 
   &:focus-visible {
-    border-radius: 14px;
+    border-radius: 9px;
     outline: 3px solid var(--sidebar-focus);
     outline-offset: -2px;
   }
@@ -725,21 +774,21 @@ const TopIconWrapper = styled.div<{ $isActive: boolean }>`
   height: 24px;
   color: ${({ $isActive }) =>
     $isActive ? 'var(--sidebar-icon-active)' : 'var(--sidebar-icon)'};
-  transition: color 160ms ease;
+  transition: color 140ms ease;
 `;
 
 const TopMenuText = styled.span<{ $isExpanded: boolean }>`
-  max-width: ${({ $isExpanded }) => ($isExpanded ? '180px' : '0')};
+  max-width: ${({ $isExpanded }) => ($isExpanded ? '178px' : '0')};
   overflow: hidden;
   color: inherit;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
   letter-spacing: -0.04em;
   white-space: nowrap;
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   transition:
-    max-width 220ms ease,
-    opacity 160ms ease;
+    max-width 180ms ease,
+    opacity 140ms ease;
 `;
 
 const DropdownButton = styled.button`
@@ -748,19 +797,20 @@ const DropdownButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   flex: 0 0 auto;
-  margin-right: 6px;
-  border-radius: 12px;
+  margin-right: 4px;
+  border: 1px solid transparent;
+  border-radius: 9px;
   color: var(--sidebar-icon);
   transition:
-    background 160ms ease,
-    color 160ms ease,
-    transform 160ms ease;
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease;
 
   &[aria-expanded='true'] {
-    color: var(--sidebar-icon-active);
+    color: var(--sidebar-text-primary);
 
     svg {
       transform: rotate(180deg);
@@ -768,10 +818,11 @@ const DropdownButton = styled.button`
   }
 
   svg {
-    transition: transform 180ms ease;
+    transition: transform 160ms ease;
   }
 
   &:hover {
+    border-color: var(--sidebar-border);
     background: var(--sidebar-surface-hover);
     color: var(--sidebar-text-primary);
   }
@@ -788,21 +839,21 @@ const SubMenu = styled.ul<{
   $itemCount: number;
 }>`
   display: grid;
-  gap: 4px;
+  gap: 3px;
   max-height: ${({ $isOpen, $isExpanded, $itemCount }) =>
-    $isOpen && $isExpanded ? `${$itemCount * 44 + 12}px` : '0'};
+    $isOpen && $isExpanded ? `${$itemCount * 42 + 14}px` : '0'};
   padding: ${({ $isOpen, $isExpanded }) =>
-    $isOpen && $isExpanded ? '6px 0 4px 34px' : '0 0 0 34px'};
-  margin: 0;
+    $isOpen && $isExpanded ? '7px 0 8px 24px' : '0 0 0 24px'};
+  margin: 0 0 0 18px;
   overflow: hidden;
   border-left: ${({ $isOpen, $isExpanded }) =>
     $isOpen && $isExpanded ? '1px solid var(--sidebar-border)' : '0'};
   list-style: none;
   opacity: ${({ $isOpen, $isExpanded }) => ($isOpen && $isExpanded ? 1 : 0)};
   transition:
-    max-height 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    padding 220ms ease,
-    opacity 160ms ease;
+    max-height 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 180ms ease,
+    opacity 140ms ease;
 `;
 
 const SubMenuItem = styled.li`
@@ -814,20 +865,24 @@ const SubMenuLink = styled(Link)<{
 }>`
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 40px;
-  padding: 0 12px;
-  border-radius: 13px;
+  gap: 9px;
+  min-height: 38px;
+  padding: 0 11px;
+  border: 1px solid ${({ $isActive }) =>
+    $isActive ? 'var(--sidebar-border)' : 'transparent'};
+  border-radius: 9px;
   background: ${({ $isActive }) =>
     $isActive ? 'var(--sidebar-child-active-surface)' : 'transparent'};
   color: ${({ $isActive }) =>
     $isActive ? 'var(--sidebar-text-primary)' : 'var(--sidebar-text-secondary)'};
   text-decoration: none;
   transition:
-    background 160ms ease,
-    color 160ms ease;
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease;
 
   &:hover {
+    border-color: var(--sidebar-border);
     background: ${({ $isActive }) =>
       $isActive
         ? 'var(--sidebar-child-active-surface)'
@@ -850,7 +905,7 @@ const SubIconWrapper = styled.div<{ $isActive: boolean }>`
   height: 18px;
   color: ${({ $isActive }) =>
     $isActive ? 'var(--sidebar-icon-active)' : 'var(--sidebar-icon)'};
-  transition: color 160ms ease;
+  transition: color 140ms ease;
 `;
 
 const SubMenuText = styled.span`
@@ -868,7 +923,7 @@ const BottomSection = styled.div<{ $isExpanded: boolean }>`
   align-items: center;
   justify-content: flex-end;
   flex-shrink: 0;
-  padding: ${({ $isExpanded }) => ($isExpanded ? '16px' : '16px 11px')};
+  padding: ${({ $isExpanded }) => ($isExpanded ? '14px 12px' : '14px 10px')};
   border-top: 1px solid var(--sidebar-border);
   background: var(--sidebar-bg);
 `;
@@ -880,16 +935,19 @@ const ThemeToggleButton = styled.button<{ $isExpanded: boolean }>`
   align-items: center;
   justify-content: ${({ $isExpanded }) =>
     $isExpanded ? 'space-between' : 'center'};
-  width: ${({ $isExpanded }) => ($isExpanded ? '100%' : '58px')};
-  min-height: 48px;
+  width: ${({ $isExpanded }) => ($isExpanded ? '100%' : '56px')};
+  min-height: 50px;
   padding: ${({ $isExpanded }) => ($isExpanded ? '8px 10px 8px 12px' : '0')};
-  border-radius: 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
   color: var(--sidebar-text-primary);
   transition:
-    background 160ms ease,
-    color 160ms ease;
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease;
 
   &:hover {
+    border-color: var(--sidebar-border);
     background: var(--sidebar-surface-hover);
   }
 
@@ -908,14 +966,14 @@ const ThemeToggleTextGroup = styled.div<{ $isExpanded: boolean }>`
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   pointer-events: none;
   transition:
-    max-width 220ms ease,
-    opacity 160ms ease;
+    max-width 180ms ease,
+    opacity 140ms ease;
 `;
 
 const ThemeToggleTitle = styled.span`
   color: var(--sidebar-text-primary);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.03em;
   white-space: nowrap;
 `;
@@ -933,10 +991,10 @@ const ThemeSwitchTrack = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  width: 58px;
-  height: 32px;
+  width: 54px;
+  height: 30px;
   flex: 0 0 auto;
-  padding: 0 8px;
+  padding: 0 7px;
   border: 1px solid var(--sidebar-toggle-border);
   border-radius: 999px;
   background: var(--sidebar-toggle-bg);
@@ -950,21 +1008,21 @@ const ThemeSwitchIcon = styled.span<{ $active: boolean }>`
   justify-content: center;
   color: ${({ $active }) =>
     $active ? 'var(--sidebar-toggle-icon-active)' : 'var(--sidebar-text-muted)'};
-  transition: color 160ms ease;
+  transition: color 140ms ease;
 `;
 
 const ThemeSwitchThumb = styled.span<{ $isDark: boolean }>`
   position: absolute;
   top: 3px;
   left: 3px;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border: 1px solid var(--sidebar-toggle-border);
   border-radius: 999px;
   background: var(--sidebar-toggle-thumb);
-  transform: translateX(${({ $isDark }) => ($isDark ? '26px' : '0')});
+  transform: translateX(${({ $isDark }) => ($isDark ? '24px' : '0')});
   transition:
-    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
-    background 160ms ease,
-    border-color 160ms ease;
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 140ms ease,
+    border-color 140ms ease;
 `;

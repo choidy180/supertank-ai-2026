@@ -6,7 +6,6 @@ import {
   ChevronDown,
   MessageCircle,
   RefreshCw,
-  Sparkles,
   X,
 } from 'lucide-react';
 import styled, { css, keyframes } from 'styled-components';
@@ -88,49 +87,49 @@ type FloatingThemeStyle = {
 const FLOATING_THEME: Record<'light' | 'dark', FloatingThemeStyle> = {
   light: {
     colorScheme: 'light',
-    panel: 'rgba(255, 255, 255, 0.78)',
+    panel: '#ffffff',
     panelSolid: '#ffffff',
-    elevated: 'rgba(255, 255, 255, 0.94)',
-    muted: 'rgba(246, 247, 251, 0.92)',
-    hover: 'rgba(235, 239, 246, 0.96)',
-    border: 'rgba(17, 24, 39, 0.1)',
-    borderStrong: 'rgba(17, 24, 39, 0.18)',
+    elevated: '#ffffff',
+    muted: '#f8fafc',
+    hover: '#f1f5f9',
+    border: '#e5e7eb',
+    borderStrong: '#cbd5e1',
     textPrimary: '#111827',
-    textSecondary: '#64748b',
-    textTertiary: '#9ca3af',
-    accent: '#0a84ff',
-    accentSoft: 'rgba(10, 132, 255, 0.1)',
-    launcherBg: 'rgba(255, 255, 255, 0.9)',
+    textSecondary: '#475569',
+    textTertiary: '#94a3b8',
+    accent: '#2563eb',
+    accentSoft: 'rgba(37, 99, 235, 0.08)',
+    launcherBg: '#ffffff',
     launcherText: '#111827',
     danger: '#dc2626',
     dangerSoft: 'rgba(220, 38, 38, 0.08)',
     success: '#16a34a',
-    shadow: '0 16px 38px rgba(15, 23, 42, 0.14)',
-    shadowStrong: '0 28px 80px rgba(15, 23, 42, 0.22)',
-    focus: 'rgba(10, 132, 255, 0.22)',
+    shadow: '0 1px 2px rgba(15, 23, 42, 0.04)',
+    shadowStrong: '0 12px 32px rgba(15, 23, 42, 0.12)',
+    focus: 'rgba(37, 99, 235, 0.18)',
   },
   dark: {
     colorScheme: 'dark',
-    panel: 'rgba(15, 23, 42, 0.78)',
-    panelSolid: '#0f172a',
-    elevated: 'rgba(30, 41, 59, 0.9)',
-    muted: 'rgba(30, 41, 59, 0.72)',
-    hover: 'rgba(51, 65, 85, 0.72)',
-    border: 'rgba(226, 232, 240, 0.12)',
-    borderStrong: 'rgba(226, 232, 240, 0.24)',
-    textPrimary: '#f8fafc',
-    textSecondary: '#cbd5e1',
-    textTertiary: '#94a3b8',
-    accent: '#7dd3fc',
-    accentSoft: 'rgba(125, 211, 252, 0.12)',
-    launcherBg: 'rgba(15, 23, 42, 0.86)',
-    launcherText: '#f8fafc',
-    danger: '#fca5a5',
-    dangerSoft: 'rgba(252, 165, 165, 0.1)',
-    success: '#86efac',
-    shadow: '0 16px 44px rgba(0, 0, 0, 0.34)',
-    shadowStrong: '0 30px 86px rgba(0, 0, 0, 0.5)',
-    focus: 'rgba(125, 211, 252, 0.26)',
+    panel: '#141414',
+    panelSolid: '#141414',
+    elevated: '#181818',
+    muted: '#1a1a1a',
+    hover: '#222222',
+    border: '#2a2a2a',
+    borderStrong: '#3a3a3a',
+    textPrimary: '#f5f5f5',
+    textSecondary: '#c7c7c7',
+    textTertiary: '#8f8f8f',
+    accent: '#2563eb',
+    accentSoft: 'rgba(37, 99, 235, 0.16)',
+    launcherBg: '#141414',
+    launcherText: '#f5f5f5',
+    danger: '#ef4444',
+    dangerSoft: 'rgba(239, 68, 68, 0.12)',
+    success: '#16a34a',
+    shadow: '0 1px 2px rgba(0, 0, 0, 0.26)',
+    shadowStrong: '0 16px 42px rgba(0, 0, 0, 0.42)',
+    focus: 'rgba(37, 99, 235, 0.28)',
   },
 };
 
@@ -633,7 +632,7 @@ export default function FloatingChatbotAssistant() {
           <PanelChrome>
             <PanelIdentity>
               <PanelOrb aria-hidden="true">
-                <Sparkles size={18} />
+                <MessageCircle size={18} />
               </PanelOrb>
 
               <PanelTitleGroup>
@@ -699,7 +698,7 @@ export default function FloatingChatbotAssistant() {
           <span>{isOpen ? '열린 상태' : '조치 이력 요약'}</span>
         </LauncherText>
 
-        {!isOpen && <LauncherPulse aria-hidden="true" />}
+        {!isOpen && <LauncherStatusDot aria-hidden="true" />}
       </Launcher>
     </FloatingRoot>
   );
@@ -720,35 +719,6 @@ const buttonReset = css`
 const spin = keyframes`
   to {
     transform: rotate(360deg);
-  }
-`;
-
-const floatIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translate3d(0, 14px, 0) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-`;
-
-const pulse = keyframes`
-  0% {
-    transform: scale(0.7);
-    opacity: 0.42;
-  }
-
-  70% {
-    transform: scale(1.65);
-    opacity: 0;
-  }
-
-  100% {
-    transform: scale(1.65);
-    opacity: 0;
   }
 `;
 
@@ -773,46 +743,44 @@ const Launcher = styled.button`
   ${buttonReset};
 
   position: fixed;
-  right: 26px;
-  bottom: 26px;
+  right: 24px;
+  bottom: 24px;
   z-index: 1910;
   display: inline-flex;
   align-items: center;
-  gap: 11px;
-  min-width: 172px;
-  height: 64px;
-  padding: 8px 17px 8px 9px;
+  gap: 10px;
+  min-width: 164px;
+  height: 58px;
+  padding: 8px 16px 8px 8px;
   border: 1px solid var(--floating-border);
-  border-radius: 999px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent),
-    var(--floating-launcher-bg);
+  border-radius: 16px;
+  background: var(--floating-launcher-bg);
   color: var(--floating-launcher-text);
   box-shadow: var(--floating-shadow);
-  backdrop-filter: blur(22px) saturate(1.15);
   transition:
-    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 160ms ease,
     border-color 160ms ease,
-    box-shadow 160ms ease,
-    background 160ms ease;
+    background 160ms ease,
+    box-shadow 160ms ease;
 
   &:hover {
-    transform: translateY(-3px);
+    transform: translateY(-1px);
     border-color: var(--floating-border-strong);
+    background: var(--floating-hover);
     box-shadow: var(--floating-shadow-strong);
   }
 
   &:focus-visible {
-    outline: 4px solid var(--floating-focus);
-    outline-offset: 4px;
+    outline: 3px solid var(--floating-focus);
+    outline-offset: 3px;
   }
 
   @media (max-width: 640px) {
     right: 18px;
     bottom: 18px;
-    min-width: 64px;
-    width: 64px;
-    height: 64px;
+    min-width: 58px;
+    width: 58px;
+    height: 58px;
     padding: 8px;
   }
 `;
@@ -821,24 +789,25 @@ const LauncherIcon = styled.span`
   position: relative;
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   flex: 0 0 auto;
-  border-radius: 999px;
-  background: var(--floating-accent-soft);
+  border: 1px solid var(--floating-border);
+  border-radius: 12px;
+  background: var(--floating-muted);
   color: var(--floating-accent);
 `;
 
 const LauncherText = styled.span`
   display: grid;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
   text-align: left;
 
   strong {
     color: var(--floating-text-primary);
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.035em;
     white-space: nowrap;
@@ -846,9 +815,9 @@ const LauncherText = styled.span`
 
   span {
     color: var(--floating-text-secondary);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.25;
     white-space: nowrap;
   }
 
@@ -857,53 +826,40 @@ const LauncherText = styled.span`
   }
 `;
 
-const LauncherPulse = styled.span`
+const LauncherStatusDot = styled.span`
   position: absolute;
-  top: 9px;
-  right: 12px;
-  width: 9px;
-  height: 9px;
+  top: 10px;
+  right: 11px;
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
   background: var(--floating-accent);
-
-  &::after {
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: inherit;
-    animation: ${pulse} 1.8s ease-out infinite;
-    content: '';
-  }
 `;
 
 const FloatingPanel = styled.aside`
   position: fixed;
   right: 24px;
-  bottom: 100px;
+  bottom: 92px;
   z-index: 1905;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
-  width: min(482px, calc(100vw - 32px));
-  height: min(760px, calc(100dvh - 126px));
+  width: min(468px, calc(100vw - 32px));
+  height: min(740px, calc(100dvh - 116px));
   min-height: 420px;
   overflow: hidden;
   border: 1px solid var(--floating-border);
-  border-radius: 34px;
-  background:
-    radial-gradient(circle at 10% 0%, var(--floating-accent-soft), transparent 34%),
-    var(--floating-panel);
+  border-radius: 20px;
+  background: var(--floating-panel);
   color: var(--floating-text-primary);
   box-shadow: var(--floating-shadow-strong);
-  backdrop-filter: blur(26px) saturate(1.18);
-  animation: ${floatIn} 240ms cubic-bezier(0.22, 1, 0.36, 1);
 
   @media (max-width: 640px) {
     right: 10px;
-    bottom: 92px;
+    bottom: 86px;
     width: calc(100vw - 20px);
-    height: calc(100dvh - 112px);
+    height: calc(100dvh - 104px);
     min-height: 0;
-    border-radius: 28px;
+    border-radius: 18px;
   }
 `;
 
@@ -913,8 +869,9 @@ const PanelChrome = styled.header`
   justify-content: space-between;
   gap: 16px;
   min-width: 0;
-  padding: 18px 18px 15px;
+  padding: 18px;
   border-bottom: 1px solid var(--floating-border);
+  background: var(--floating-panel);
 `;
 
 const PanelIdentity = styled.div`
@@ -927,26 +884,27 @@ const PanelIdentity = styled.div`
 const PanelOrb = styled.div`
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   flex: 0 0 auto;
   border: 1px solid var(--floating-border);
-  border-radius: 16px;
-  background: var(--floating-elevated);
+  border-radius: 12px;
+  background: var(--floating-muted);
   color: var(--floating-accent);
 `;
 
 const PanelTitleGroup = styled.div`
   display: grid;
-  gap: 3px;
+  gap: 4px;
   min-width: 0;
 `;
 
 const PanelEyebrow = styled.div`
   color: var(--floating-accent);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   line-height: 1;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 `;
 
@@ -954,21 +912,22 @@ const PanelTitle = styled.h2`
   margin: 0;
   color: var(--floating-text-primary);
   font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.045em;
-  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
 `;
 
 const PanelCaption = styled.div`
   color: var(--floating-text-secondary);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
+  line-height: 1.35;
 `;
 
 const PanelActions = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   flex: 0 0 auto;
 `;
 
@@ -980,17 +939,15 @@ const ChromeButton = styled.button`
   width: 38px;
   height: 38px;
   border: 1px solid var(--floating-border);
-  border-radius: 999px;
+  border-radius: 10px;
   background: var(--floating-elevated);
   color: var(--floating-text-secondary);
   transition:
-    transform 160ms ease,
     border-color 160ms ease,
     background 160ms ease,
     color 160ms ease;
 
   &:hover {
-    transform: translateY(-1px);
     border-color: var(--floating-border-strong);
     background: var(--floating-hover);
     color: var(--floating-text-primary);
@@ -1011,9 +968,10 @@ const NetworkNotice = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 11px 16px;
   border-bottom: 1px solid var(--floating-border);
-  background: var(--floating-danger-soft);
+  border-left: 3px solid var(--floating-danger);
+  background: var(--floating-muted);
   color: var(--floating-danger);
   font-size: 12px;
   font-weight: 800;
@@ -1029,7 +987,7 @@ const NetworkNotice = styled.div`
     flex: 0 0 auto;
     color: inherit;
     font-size: 12px;
-    font-weight: 950;
+    font-weight: 800;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
@@ -1040,7 +998,7 @@ const PanelBody = styled.div`
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  /* padding: 12px; */
+  background: var(--floating-panel-solid);
 
   > * {
     width: 100%;

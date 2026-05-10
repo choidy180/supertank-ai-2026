@@ -21,8 +21,8 @@ export const TitleGroup = styled.div`
 
 export const Title = styled.h1`
   margin: 0;
-  font-size: 34px;
-  font-weight: 800;
+  font-size: 28px;
+  font-weight: 700;
   letter-spacing: -0.04em;
   color: #ffffff;
 `;

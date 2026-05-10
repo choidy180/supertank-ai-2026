@@ -53,25 +53,27 @@ const DASHBOARD_THEME_STYLES: Record<DashboardThemeMode, DashboardThemeStyle> = 
     focus: 'rgba(37, 99, 235, 0.18)',
   },
   dark: {
-    background: '#0f172a',
-    surface: '#111827',
-    surfaceMuted: '#1f2937',
-    surfaceHover: '#273449',
-    border: 'rgba(148, 163, 184, 0.2)',
-    borderStrong: 'rgba(148, 163, 184, 0.36)',
-    textPrimary: '#f8fafc',
-    textSecondary: '#cbd5e1',
-    textTertiary: '#94a3b8',
-    accent: '#93c5fd',
-    accentSoft: 'rgba(147, 197, 253, 0.12)',
-    success: '#86efac',
-    successSoft: 'rgba(134, 239, 172, 0.1)',
-    warning: '#fcd34d',
-    warningSoft: 'rgba(252, 211, 77, 0.1)',
-    error: '#fca5a5',
-    errorSoft: 'rgba(252, 165, 165, 0.1)',
-    shadow: '0 1px 2px rgba(0, 0, 0, 0.16)',
-    focus: 'rgba(147, 197, 253, 0.24)',
+    // 메인 다크 컬러는 요청한 #141414 기준으로 고정했습니다.
+    background: '#141414',
+    surface: '#181818',
+    surfaceMuted: '#1d1d1d',
+    surfaceHover: '#222222',
+    border: '#2a2a2a',
+    borderStrong: '#3a3a3a',
+    textPrimary: '#f5f5f5',
+    textSecondary: '#bdbdbd',
+    textTertiary: '#8a8a8a',
+    accent: '#2563eb',
+    accentSoft: 'rgba(37, 99, 235, 0.16)',
+    // 파스텔톤 대신 직관적인 상태 컬러로 교체했습니다.
+    success: '#16a34a',
+    successSoft: 'rgba(22, 163, 74, 0.16)',
+    warning: '#f59e0b',
+    warningSoft: 'rgba(245, 158, 11, 0.16)',
+    error: '#ef4444',
+    errorSoft: 'rgba(239, 68, 68, 0.16)',
+    shadow: '0 1px 0 rgba(255, 255, 255, 0.03), 0 18px 46px rgba(0, 0, 0, 0.32)',
+    focus: 'rgba(37, 99, 235, 0.32)',
   },
 };
 
@@ -140,18 +142,36 @@ const PageShellBase = styled.main<{ $isDark: boolean }>`
   ${({ $isDark }) => createDashboardThemeVars(getDashboardTheme($isDark))}
 
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  min-width: 0;
   min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
   height: 100dvh;
-  padding: 28px;
-  overflow: hidden;
+  padding: clamp(18px, 1.45vw, 28px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--color-background);
   color: var(--color-text-primary);
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  @media (max-height: 900px) and (min-width: 1181px) {
+    padding: 18px;
+  }
 
   @media (max-width: 768px) {
     height: auto;
     min-height: 100vh;
-    padding: 20px;
+    min-height: 100dvh;
+    padding: 16px;
     overflow: visible;
   }
 `;
@@ -178,52 +198,105 @@ PageShell.displayName = 'PageShell';
 
 export const DashboardGrid = styled.section`
   display: grid;
-  grid-template-columns: 360px minmax(0, 1fr) 440px;
-  gap: 20px;
-  min-height: calc(100vh - 164px);
+  grid-template-columns: minmax(300px, 340px) minmax(0, 1fr) minmax(340px, 400px);
+  gap: clamp(14px, 1.05vw, 20px);
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: calc(100dvh - var(--dashboard-grid-offset, 164px));
+  max-height: calc(100dvh - var(--dashboard-grid-offset, 164px));
+  overflow: hidden;
 
-  @media (max-width: 1380px) {
-    grid-template-columns: 320px minmax(0, 1fr) 360px;
+  > * {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  @media (max-width: 1680px) {
+    grid-template-columns: minmax(280px, 320px) minmax(0, 1fr) minmax(320px, 360px);
+    gap: 16px;
+  }
+
+  @media (max-width: 1440px) {
+    grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) minmax(300px, 340px);
+    gap: 14px;
+  }
+
+  @media (max-height: 900px) and (min-width: 1181px) {
+    height: calc(100dvh - var(--dashboard-grid-offset-compact, 128px));
+    max-height: calc(100dvh - var(--dashboard-grid-offset-compact, 128px));
+    gap: 12px;
   }
 
   @media (max-width: 1180px) {
     grid-template-columns: 1fr;
-    min-height: auto;
+    height: auto;
+    max-height: none;
+    overflow: visible;
   }
 `;
 
 export const LeftColumn = styled.div`
   display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 20px;
+  grid-template-rows: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(12px, 1.05vw, 20px);
+  min-width: 0;
   min-height: 0;
-  max-height: calc(100vh - 130px);
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+
+  > * {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  @media (max-height: 900px) and (min-width: 1181px) {
+    gap: 12px;
+  }
 
   @media (max-width: 1180px) {
     grid-template-rows: auto;
+    height: auto;
     max-height: none;
+    overflow: visible;
   }
 `;
 
 export const Panel = styled.section`
   display: flex;
   flex-direction: column;
+  min-width: 0;
   min-height: 0;
-  max-height: calc(100vh - 130px);
-  padding: 22px;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  padding: clamp(16px, 1.25vw, 22px);
+  overflow: hidden;
   border: 1px solid var(--color-border);
-  border-radius: 26px;
+  border-radius: clamp(18px, 1.6vw, 26px);
   background: var(--color-surface);
   box-shadow: var(--color-shadow);
   color: var(--color-text-primary);
 
+  > * {
+    min-width: 0;
+  }
+
+  @media (max-height: 900px) and (min-width: 1181px) {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
   @media (max-width: 1180px) {
+    height: auto;
     max-height: none;
+    overflow: visible;
   }
 
   @media (max-width: 768px) {
-    padding: 18px;
-    border-radius: 22px;
+    padding: 16px;
+    border-radius: 20px;
   }
 `;
 
@@ -240,9 +313,22 @@ export const PanelTop = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 18px;
+  flex: 0 0 auto;
+  min-width: 0;
+  margin-bottom: clamp(12px, 1vw, 18px);
   overflow: hidden;
+
+  @media (max-height: 900px) and (min-width: 1181px) {
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 720px) {
+    flex-direction: column;
+  }
 `;
+
+// 기존 코드 중 PanelHeader를 import하는 파일과의 호환을 위해 alias로 둡니다.
+export const PanelHeader = PanelTop;
 
 export const PanelTitleGroup = styled.div`
   display: grid;
@@ -253,15 +339,31 @@ export const PanelTitleGroup = styled.div`
 export const PanelTitle = styled.h2`
   margin: 0;
   color: var(--color-text-primary);
-  font-size: 24px;
+  font-size: clamp(19px, 1.22vw, 24px);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.18;
   letter-spacing: -0.03em;
+  overflow-wrap: break-word;
+
+  @media (max-height: 900px) and (min-width: 1181px) {
+    font-size: 20px;
+  }
 `;
 
 export const PanelCaption = styled.p`
   margin: 0;
   color: var(--color-text-secondary);
-  font-size: 18px;
-  line-height: 1.4;
+  font-size: clamp(13px, 0.86vw, 16px);
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+
+  @media (max-height: 900px) and (min-width: 1181px) {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
 `;

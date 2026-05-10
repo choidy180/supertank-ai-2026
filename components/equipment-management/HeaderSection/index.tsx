@@ -127,7 +127,7 @@ const Eyebrow = styled.div`
   border-radius: 999px;
   background: var(--color-surface-muted);
   color: var(--color-text-secondary);
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
 `;
@@ -142,7 +142,7 @@ const PulseDot = styled.span`
 const Title = styled.h1`
   margin: 0;
   color: var(--color-text-primary);
-  font-size: clamp(30px, 2.2vw, 40px);
+  font-size: clamp(20px, 2.2vw, 24px);
   font-weight: 800;
   line-height: 1.18;
   letter-spacing: -0.05em;
@@ -171,7 +171,7 @@ const MetaPill = styled.div<{ $tone?: MetaTone }>`
   border-radius: 999px;
   background: ${({ $tone = 'neutral' }) => META_TONE_VARS[$tone].background};
   color: ${({ $tone = 'neutral' }) => META_TONE_VARS[$tone].color};
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
 `;

@@ -6,7 +6,7 @@ import {
   PanelCaption,
   PanelTitle,
   PanelTitleGroup,
-  PanelTop
+  PanelTop,
 } from '../shared/styles';
 import {
   QuickStatCard,
@@ -21,7 +21,7 @@ import {
   RingTrack,
   RingValue,
   RingValueText,
-  RingWrap
+  RingWrap,
 } from './styles';
 
 interface OverviewPanelProps {
@@ -33,7 +33,7 @@ interface OverviewPanelProps {
 const OverviewPanel: FC<OverviewPanelProps> = ({
   completionRate,
   selectedTimeSlotLabel,
-  lineCount
+  lineCount,
 }) => {
   return (
     <Panel>
@@ -48,12 +48,8 @@ const OverviewPanel: FC<OverviewPanelProps> = ({
 
       <RingWrap>
         <RingInner>
-          <RingSvg viewBox="0 0 216 216">
-            <RingTrack
-              cx="108"
-              cy="108"
-              r={CIRCLE_RADIUS}
-            />
+          <RingSvg viewBox="0 0 216 216" aria-hidden="true">
+            <RingTrack cx="108" cy="108" r={CIRCLE_RADIUS} />
             <RingValue
               cx="108"
               cy="108"
@@ -65,7 +61,6 @@ const OverviewPanel: FC<OverviewPanelProps> = ({
           <RingCenter>
             <RingValueText>
               <RingNumber>{completionRate}%</RingNumber>
-              <RingLabel>현재 공정 상태 기준 완료율</RingLabel>
             </RingValueText>
           </RingCenter>
         </RingInner>

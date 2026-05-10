@@ -25,6 +25,8 @@ type MonitorThemeStyle = {
   accent: string;
   accentSoft: string;
   cyan: string;
+  onAccent: string;
+  overlay: string;
 
   success: string;
   successSoft: string;
@@ -41,6 +43,7 @@ type MonitorThemeStyle = {
   textStrong: string;
 
   shadow: string;
+  shadowStrong: string;
   focus: string;
 
   scrollbarThumb: string;
@@ -65,16 +68,18 @@ const MONITOR_THEME_STYLES: Record<ThemeMode, MonitorThemeStyle> = {
 
     accent: '#2563eb',
     accentSoft: 'rgba(37, 99, 235, 0.08)',
-    cyan: '#0891b2',
+    cyan: '#2563eb',
+    onAccent: '#ffffff',
+    overlay: 'rgba(15, 23, 42, 0.52)',
 
-    success: '#059669',
-    successSoft: 'rgba(5, 150, 105, 0.08)',
+    success: '#16a34a',
+    successSoft: 'rgba(22, 163, 74, 0.08)',
 
-    warning: '#d97706',
-    warningSoft: 'rgba(217, 119, 6, 0.08)',
+    warning: '#f59e0b',
+    warningSoft: 'rgba(245, 158, 11, 0.1)',
 
-    error: '#dc2626',
-    errorSoft: 'rgba(220, 38, 38, 0.08)',
+    error: '#ef4444',
+    errorSoft: 'rgba(239, 68, 68, 0.08)',
 
     textStrong: '#111827',
     textPrimary: '#334155',
@@ -82,6 +87,7 @@ const MONITOR_THEME_STYLES: Record<ThemeMode, MonitorThemeStyle> = {
     textTertiary: '#94a3b8',
 
     shadow: '0 1px 2px rgba(15, 23, 42, 0.04)',
+    shadowStrong: '0 18px 48px rgba(15, 23, 42, 0.14)',
     focus: 'rgba(37, 99, 235, 0.18)',
 
     scrollbarThumb: 'rgba(148, 163, 184, 0.38)',
@@ -91,41 +97,44 @@ const MONITOR_THEME_STYLES: Record<ThemeMode, MonitorThemeStyle> = {
   dark: {
     colorScheme: 'dark',
 
-    background: '#0f172a',
-    backgroundMuted: '#111827',
+    background: '#141414',
+    backgroundMuted: '#171717',
 
-    surface: '#111827',
-    surfaceMuted: '#1f2937',
-    surfaceHover: '#273449',
-    surfaceSoft: '#334155',
-    glass: '#1f2937',
+    surface: '#181818',
+    surfaceMuted: '#1d1d1d',
+    surfaceHover: '#222222',
+    surfaceSoft: '#262626',
+    glass: '#181818',
 
-    border: 'rgba(148, 163, 184, 0.2)',
-    borderStrong: 'rgba(148, 163, 184, 0.36)',
+    border: '#2a2a2a',
+    borderStrong: '#3a3a3a',
 
-    accent: '#93c5fd',
-    accentSoft: 'rgba(147, 197, 253, 0.12)',
-    cyan: '#67e8f9',
+    accent: '#2563eb',
+    accentSoft: 'rgba(37, 99, 235, 0.16)',
+    cyan: '#2563eb',
+    onAccent: '#ffffff',
+    overlay: 'rgba(0, 0, 0, 0.68)',
 
-    success: '#86efac',
-    successSoft: 'rgba(134, 239, 172, 0.1)',
+    success: '#16a34a',
+    successSoft: 'rgba(22, 163, 74, 0.14)',
 
-    warning: '#fcd34d',
-    warningSoft: 'rgba(252, 211, 77, 0.1)',
+    warning: '#f59e0b',
+    warningSoft: 'rgba(245, 158, 11, 0.16)',
 
-    error: '#fca5a5',
-    errorSoft: 'rgba(252, 165, 165, 0.1)',
+    error: '#ef4444',
+    errorSoft: 'rgba(239, 68, 68, 0.14)',
 
-    textStrong: '#f8fafc',
-    textPrimary: '#cbd5e1',
-    textSecondary: '#94a3b8',
-    textTertiary: '#64748b',
+    textStrong: '#f9fafb',
+    textPrimary: '#e5e7eb',
+    textSecondary: '#a3a3a3',
+    textTertiary: '#737373',
 
-    shadow: '0 1px 2px rgba(0, 0, 0, 0.16)',
-    focus: 'rgba(147, 197, 253, 0.24)',
+    shadow: '0 1px 2px rgba(0, 0, 0, 0.22)',
+    shadowStrong: '0 18px 48px rgba(0, 0, 0, 0.42)',
+    focus: 'rgba(37, 99, 235, 0.3)',
 
-    scrollbarThumb: 'rgba(148, 163, 184, 0.34)',
-    scrollbarThumbHover: 'rgba(203, 213, 225, 0.42)',
+    scrollbarThumb: 'rgba(115, 115, 115, 0.48)',
+    scrollbarThumbHover: 'rgba(163, 163, 163, 0.58)',
   },
 };
 
@@ -150,6 +159,8 @@ const createMonitorThemeVars = (theme: MonitorThemeStyle) => css`
   --monitor-blue: ${theme.accent};
   --monitor-blue-soft: ${theme.accentSoft};
   --monitor-cyan: ${theme.cyan};
+  --monitor-on-blue: ${theme.onAccent};
+  --monitor-overlay: ${theme.overlay};
 
   --monitor-green: ${theme.success};
   --monitor-green-soft: ${theme.successSoft};
@@ -166,6 +177,7 @@ const createMonitorThemeVars = (theme: MonitorThemeStyle) => css`
   --monitor-text-muted: ${theme.textTertiary};
 
   --monitor-shadow: ${theme.shadow};
+  --monitor-shadow-strong: ${theme.shadowStrong};
   --monitor-focus: ${theme.focus};
 
   --scrollbar-thumb: ${theme.scrollbarThumb};
@@ -186,6 +198,7 @@ const createMonitorThemeVars = (theme: MonitorThemeStyle) => css`
 
   --color-accent: ${theme.accent};
   --color-accent-soft: ${theme.accentSoft};
+  --color-on-accent: ${theme.onAccent};
 
   --color-success: ${theme.success};
   --color-success-soft: ${theme.successSoft};
@@ -196,8 +209,19 @@ const createMonitorThemeVars = (theme: MonitorThemeStyle) => css`
   --color-error: ${theme.error};
   --color-error-soft: ${theme.errorSoft};
 
+  --color-overlay: ${theme.overlay};
   --color-shadow: ${theme.shadow};
+  --color-shadow-strong: ${theme.shadowStrong};
   --color-focus: ${theme.focus};
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --transition-fast: 140ms ease;
+  --transition-base: 180ms ease;
 `;
 
 const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
@@ -205,8 +229,15 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
     ${({ $isDark }) => createMonitorThemeVars(getMonitorTheme($isDark))}
   }
 
-  * {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
   }
 
   html,
@@ -229,7 +260,12 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
   }
 
   body {
-    overflow: hidden;
+    overflow-x: hidden;
+  }
+
+  #__next,
+  #root {
+    min-height: 100%;
   }
 
   a {
@@ -248,9 +284,42 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
     color: inherit;
   }
 
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  :disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  input,
+  textarea,
+  select {
+    color: inherit;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
   *::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
 
   *::-webkit-scrollbar-track {
@@ -265,7 +334,6 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    border: 2px solid transparent;
     background: var(--scrollbar-thumb-hover);
     background-clip: padding-box;
   }
@@ -273,6 +341,17 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
   ::selection {
     background: var(--color-accent-soft);
     color: var(--color-text-primary);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
   }
 `;
 

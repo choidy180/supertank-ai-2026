@@ -48,7 +48,7 @@ const APP_THEME_STYLES: Record<AppThemeMode, AppThemeStyle> = {
   light: {
     colorScheme: 'light',
 
-    background: '#f5f7fb',
+    background: '#f7f8fa',
     surface1: '#ffffff',
     surface2: '#f8fafc',
     surface3: '#f1f5f9',
@@ -65,14 +65,14 @@ const APP_THEME_STYLES: Record<AppThemeMode, AppThemeStyle> = {
     blue: '#2563eb',
     blueSoft: 'rgba(37, 99, 235, 0.08)',
 
-    green: '#059669',
-    greenSoft: 'rgba(5, 150, 105, 0.08)',
+    green: '#16a34a',
+    greenSoft: 'rgba(22, 163, 74, 0.08)',
 
-    amber: '#d97706',
-    amberSoft: 'rgba(217, 119, 6, 0.08)',
+    amber: '#f59e0b',
+    amberSoft: 'rgba(245, 158, 11, 0.10)',
 
-    red: '#dc2626',
-    redSoft: 'rgba(220, 38, 38, 0.08)',
+    red: '#ef4444',
+    redSoft: 'rgba(239, 68, 68, 0.08)',
 
     shadowLg: '0 1px 2px rgba(15, 23, 42, 0.04)',
     focus: 'rgba(37, 99, 235, 0.18)',
@@ -84,37 +84,37 @@ const APP_THEME_STYLES: Record<AppThemeMode, AppThemeStyle> = {
   dark: {
     colorScheme: 'dark',
 
-    background: '#0f172a',
-    surface1: '#111827',
-    surface2: '#1f2937',
-    surface3: '#273449',
-    surface4: '#334155',
+    background: '#141414',
+    surface1: '#181818',
+    surface2: '#1d1d1d',
+    surface3: '#222222',
+    surface4: '#2a2a2a',
 
-    borderSoft: 'rgba(148, 163, 184, 0.2)',
-    borderStrong: 'rgba(148, 163, 184, 0.36)',
+    borderSoft: '#2a2a2a',
+    borderStrong: '#3a3a3a',
 
-    textStrong: '#f8fafc',
-    textPrimary: '#cbd5e1',
-    textSecondary: '#94a3b8',
-    textMuted: '#64748b',
+    textStrong: '#f5f5f5',
+    textPrimary: '#d4d4d4',
+    textSecondary: '#a3a3a3',
+    textMuted: '#737373',
 
-    blue: '#93c5fd',
-    blueSoft: 'rgba(147, 197, 253, 0.12)',
+    blue: '#2563eb',
+    blueSoft: 'rgba(37, 99, 235, 0.16)',
 
-    green: '#86efac',
-    greenSoft: 'rgba(134, 239, 172, 0.1)',
+    green: '#16a34a',
+    greenSoft: 'rgba(22, 163, 74, 0.16)',
 
-    amber: '#fcd34d',
-    amberSoft: 'rgba(252, 211, 77, 0.1)',
+    amber: '#f59e0b',
+    amberSoft: 'rgba(245, 158, 11, 0.16)',
 
-    red: '#fca5a5',
-    redSoft: 'rgba(252, 165, 165, 0.1)',
+    red: '#ef4444',
+    redSoft: 'rgba(239, 68, 68, 0.16)',
 
-    shadowLg: '0 1px 2px rgba(0, 0, 0, 0.16)',
-    focus: 'rgba(147, 197, 253, 0.24)',
+    shadowLg: '0 1px 2px rgba(0, 0, 0, 0.28)',
+    focus: 'rgba(37, 99, 235, 0.28)',
 
-    scrollbarThumb: 'rgba(148, 163, 184, 0.34)',
-    scrollbarThumbHover: 'rgba(203, 213, 225, 0.42)',
+    scrollbarThumb: '#3a3a3a',
+    scrollbarThumbHover: '#525252',
   },
 };
 
@@ -215,7 +215,7 @@ const GlobalStyleBase = createGlobalStyle<{ $isDark: boolean }>`
   }
 
   body {
-    overflow: hidden;
+    overflow-x: hidden;
   }
 
   a {
@@ -277,10 +277,8 @@ const PageShellBase = styled.main<{ $isDark: boolean }>`
 
   min-height: 100vh;
   min-height: 100dvh;
-  max-height: 100vh;
-  max-height: 100dvh;
   padding: 24px;
-  overflow: hidden;
+  overflow-x: hidden;
   background: var(--color-background);
   color: var(--color-text-primary);
 `;
@@ -393,7 +391,7 @@ export const PanelTitle = styled.h2`
   margin: 0;
   color: var(--color-text-primary);
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.03em;
 `;

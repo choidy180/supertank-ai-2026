@@ -52,7 +52,6 @@ const OverviewPanel = ({
         <MetaGroup>
           <MetaPill $tone="navy">
             <LiveDot /> 실시간 동기화 
-            {/* ✨ 마운트되기 전에는 빈 공간을 보여주고, 마운트 된 후에만 시간을 출력 */}
             {mounted ? ` ${formatClock(now)}` : ' --:--:--'}
           </MetaPill>
           <MetaPill>불량 집계 {totalDefectValue}%</MetaPill>

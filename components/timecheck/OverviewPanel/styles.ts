@@ -8,6 +8,7 @@ export const RingWrap = styled.div`
   justify-content: center;
   flex: 1;
   min-height: 0;
+  margin-top: 20px;
 `;
 
 export const RingInner = styled.div`
