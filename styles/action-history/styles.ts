@@ -351,6 +351,13 @@ export const MiniDownloadButton = styled(GhostButton)`
   min-height: 32px;
   padding: 0 10px;
   font-size: 12px;
+
+  &:disabled {
+    border-color: var(--history-border);
+    background: var(--history-surface-muted);
+    color: var(--history-text-tertiary);
+    opacity: 0.48;
+  }
 `;
 export const SummaryTableWrapper = styled.div`
   min-width: 0;
@@ -441,6 +448,113 @@ export const BucketFill = styled.div<{ $percent: number }>`
   height: 100%;
   border-radius: 999px;
   background: var(--history-accent);
+`;
+
+export const SummaryEmptyState = styled.div`
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 220px;
+  height: 100%;
+  overflow: hidden;
+  padding: 24px 18px;
+  border: 1px solid var(--history-border);
+  border-radius: 10px;
+  background: var(--history-surface-muted);
+  color: var(--history-text-primary);
+  text-align: center;
+
+  /* &::before {
+    position: absolute;
+    top: 14px;
+    bottom: 14px;
+    left: 0;
+    width: 3px;
+    background: var(--history-accent);
+    content: '';
+  } */
+
+  @media (max-height: 860px) and (min-width: 981px) {
+    min-height: 180px;
+    padding: 18px 14px;
+  }
+`;
+
+export const SummaryEmptyIconFrame = styled.div`
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--history-accent);
+  border-radius: 10px;
+  background: var(--history-surface);
+  color: var(--history-accent);
+  box-shadow: var(--history-shadow);
+`;
+
+export const SummaryEmptyContent = styled.div`
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  max-width: 310px;
+  min-width: 0;
+`;
+
+export const SummaryEmptyEyebrow = styled.div`
+  color: var(--history-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+`;
+
+export const SummaryEmptyTitle = styled.div`
+  color: var(--history-text-primary);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  word-break: keep-all;
+`;
+
+export const SummaryEmptyDescription = styled.p`
+  margin: 0;
+  color: var(--history-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.55;
+  word-break: keep-all;
+`;
+
+export const SummaryEmptyBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--history-border);
+  border-radius: 8px;
+  background: var(--history-surface);
+  color: var(--history-text-secondary);
+  box-shadow: var(--history-shadow);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+
+  &::before {
+    width: 6px;
+    height: 6px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: var(--history-accent);
+    content: '';
+  }
 `;
 
 export const HistorySection = styled.section`
